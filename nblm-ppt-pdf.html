@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PPT and PDF - Prompt Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient-start: #020617;
+      --bg-gradient-end: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.4);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #22d3ee;
+      --accent-hover: #67e8f9;
+      --accent-success: #10b981;
+      --code-bg: rgba(0, 0, 0, 0.3);
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: fixed linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--accent-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+    }
+
+    .prompt-workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .step-label {
+      font-weight: 800;
+      font-size: 0.8rem;
+      background: var(--accent-primary);
+      color: #020617;
+      padding: 5px 16px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .prompt-content {
+      background: var(--code-bg);
+      padding: 30px;
+      border-radius: 12px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 25px;
+      line-height: 1.6;
+      word-break: break-word;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    /* Custom Scrollbar */
+    .prompt-content::-webkit-scrollbar { width: 8px; }
+    .prompt-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    .prompt-content::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+
+    .btn {
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      width: 100%;
+      text-decoration: none;
+      border: none;
+      text-transform: uppercase;
+    }
+
+    .copy-btn {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-primary);
+      color: #020617;
+    }
+
+    .copy-btn.copied {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .footer {
+      margin-top: 80px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 40px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .step-card { padding: 25px; }
+      .prompt-content { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>PPT and PDF</h1>
+      <p class="subtitle">Instructional Asset Engine</p>
+    </header>
+
+    <div class="prompt-workflow">
+      
+      <!-- Prompt #1 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">PPT Outline</span>
+        </div>
+        <div class="prompt-content" id="p1">TASK
+
+Teacher-এর দেওয়া Lesson-কে একমাত্র মূল বিষয়বস্তু ধরে একটি Teaching PPT Outline তৈরি করুন।
+
+SOURCE
+
+Teacher-এর Lesson-ই একমাত্র মূল content source।
+
+Lesson-এর বাইরে থেকে কোনও নতুন তথ্য, ব্যাখ্যা, example, teaching approach, activity বা question যোগ করবেন না।
+
+“Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স” থাকলে সেটিকে শুধুমাত্র reference হিসেবে ব্যবহার করুন; Lesson-এর content-এর বিকল্প হিসেবে নয়।
+
+LEARNER
+
+শিক্ষার্থীদের বয়স, শ্রেণি, বিষয় এবং learning level অনুযায়ী ভাষা ও presentation উপযুক্ত রাখুন। ভাষা সহজ, পরিষ্কার, সম্মানজনক এবং উৎসাহদায়ক রাখুন।
+
+OUTPUT
+
+প্রতিটি Slide-এর জন্য দিন:
+• Slide Title
+• Lesson-এর কোন অংশ থাকবে
+• মূল বক্তব্য
+• Lesson-এ থাকা Example / Visual / Question, যদি থাকে
+
+Lesson-এর মূল sequence বজায় রেখে Slide-এ ভাগ করুন।
+
+QUALITY CHECK
+
+শুধু PPT Outline দিন। Lesson-এর কোনও গুরুত্বপূর্ণ বিষয় বাদ দেবেন না এবং Lesson-এর বাইরে কিছু যোগ করবেন না।</div>
+        <button class="btn copy-btn" onclick="copyText('p1', this)">
+          <span>Copy PPT Outline</span>
+        </button>
+      </div>
+
+      <!-- Prompt #2 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">PPT তৈরি</span>
+        </div>
+        <div class="prompt-content" id="p2">TASK
+
+Teacher-এর দেওয়া Lesson-কে একমাত্র মূল বিষয়বস্তু ধরে একটি সম্পূর্ণ Teaching PPT তৈরি করুন।
+
+SOURCE
+
+Teacher-এর Lesson-ই একমাত্র মূল content source।
+
+Lesson-এর বাইরে থেকে কোনও নতুন তথ্য, ব্যাখ্যা, example, teaching approach, activity বা question যোগ করবেন না।
+
+“Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স” থাকলে সেটিকে শুধুমাত্র reference হিসেবে ব্যবহার করুন; Lesson-এর content-এর বিকল্প হিসেবে নয়।
+
+LEARNER
+
+শিক্ষার্থীদের বয়স, শ্রেণি, বিষয় এবং learning level অনুযায়ী ভাষা ও presentation উপযুক্ত রাখুন। ভাষা সহজ, পরিষ্কার, সম্মানজনক এবং উৎসাহদায়ক রাখুন।
+
+PRESENTATION
+
+আপলোড করা PPT Outline থাকলে সেটির structure অনুসরণ করুন।
+
+Lesson-এর মূল sequence ও meaning বজায় রাখুন।
+
+Lesson-এ থাকা Example / Diagram / Illustration / Chart / Table / Question থাকলে সেগুলিই ব্যবহার করুন।
+
+অপ্রয়োজনীয় text বা decorative content যোগ করবেন না।
+
+QUALITY CHECK
+
+PPT যেন Teacher-এর Lesson-এর faithful presentation হয়। Lesson-এর কোনও গুরুত্বপূর্ণ বিষয় বাদ দেবেন না এবং Lesson-এর বাইরে কিছু যোগ করবেন না।</div>
+        <button class="btn copy-btn" onclick="copyText('p2', this)">
+          <span>Copy PPT তৈরি</span>
+        </button>
+      </div>
+
+      <!-- Prompt #3 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">PDF Outline</span>
+        </div>
+        <div class="prompt-content" id="p3">TASK
+
+Teacher-এর দেওয়া Lesson-কে একমাত্র মূল বিষয়বস্তু ধরে একটি Student Learning PDF Outline তৈরি করুন।
+
+SOURCE
+
+Teacher-এর Lesson-ই একমাত্র মূল content source।
+
+Lesson-এর বাইরে থেকে কোনও নতুন তথ্য, ব্যাখ্যা, example, teaching approach, activity বা question যোগ করবেন না।
+
+“Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স” থাকলে সেটিকে শুধুমাত্র reference হিসেবে ব্যবহার করুন; Lesson-এর content-এর বিকল্প হিসেবে নয়।
+
+LEARNER
+
+শিক্ষার্থীদের বয়স, শ্রেণি, বিষয় এবং learning level অনুযায়ী ভাষা ও presentation উপযুক্ত রাখুন। ভাষা সহজ, পরিষ্কার, সম্মানজনক এবং উৎসাহদায়ক রাখুন।
+
+OUTPUT
+
+প্রতিটি Section / Page-এর জন্য দিন:
+• Title
+• Lesson-এর কোন অংশ থাকবে
+• মূল বিষয়
+• Lesson-এ থাকা Explanation / Example / Visual / Practice / Quick Recall, যদি থাকে
+
+Lesson-এর মূল sequence বজায় রেখে Section / Page-এ ভাগ করুন।
+
+PDF-টি Student-এর class-এর পরে Lesson পড়া, practice এবং revision-এ ব্যবহারযোগ্য হবে। এটি Teaching PPT-এর copy হবে না।
+
+QUALITY CHECK
+
+শুধু PDF Outline দিন। Lesson-এর কোনও গুরুত্বপূর্ণ বিষয় বাদ দেবেন না এবং Lesson-এর বাইরে কিছু যোগ করবেন না।</div>
+        <button class="btn copy-btn" onclick="copyText('p3', this)">
+          <span>Copy PDF Outline</span>
+        </button>
+      </div>
+
+      <!-- Prompt #4 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">PDF তৈরি</span>
+        </div>
+        <div class="prompt-content" id="p4">TASK
+
+Teacher-এর দেওয়া Lesson-কে একমাত্র মূল বিষয়বস্তু ধরে একটি সম্পূর্ণ Student Learning PDF তৈরি করুন।
+
+SOURCE
+
+Teacher-এর Lesson-ই একমাত্র মূল content source।
+
+Lesson-এর বাইরে থেকে কোনও নতুন তথ্য, ব্যাখ্যা, example, teaching approach, activity বা question যোগ করবেন না।
+
+“Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স” থাকলে সেটিকে শুধুমাত্র reference হিসেবে ব্যবহার করুন; Lesson-এর content-এর বিকল্প হিসেবে নয়।
+
+LEARNER
+
+শিক্ষার্থীদের বয়স, শ্রেণি, বিষয় এবং learning level অনুযায়ী ভাষা ও presentation উপযুক্ত রাখুন। ভাষা সহজ, পরিষ্কার, সম্মানজনক এবং উৎসাহদায়ক রাখুন।
+
+PRESENTATION
+
+আপলোড করা PDF Outline থাকলে সেটির structure অনুসরণ করুন।
+
+Lesson-এর মূল sequence ও meaning বজায় রাখুন।
+
+Lesson-এ থাকা Explanation / Example / Diagram / Illustration / Chart / Table / Practice / Quick Recall থাকলে সেগুলিই ব্যবহার করুন।
+
+Student-এর Handwritten Notes ও Textbook-এর সঙ্গে ব্যবহার করা যায়—এমন পরিষ্কার presentation রাখুন।
+
+অপ্রয়োজনীয় text বা decorative content যোগ করবেন না।
+
+QUALITY CHECK
+
+PDF যেন Teacher-এর Lesson-এর faithful Student Learning version হয়। Lesson-এর কোনও গুরুত্বপূর্ণ বিষয় বাদ দেবেন না এবং Lesson-এর বাইরে কিছু যোগ করবেন না।</div>
+        <button class="btn copy-btn" onclick="copyText('p4', this)">
+          <span>Copy PDF তৈরি</span>
+        </button>
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <p>Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    function copyText(id, btn) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<span>Copied to Clipboard!</span>`;
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

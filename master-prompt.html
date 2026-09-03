@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fear-Free AI Learning Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient-start: #020617;
+      --bg-gradient-end: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.4);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #22d3ee;
+      --accent-hover: #67e8f9;
+      --accent-success: #10b981;
+      --accent-danger: #f43f5e;
+      --code-bg: rgba(0, 0, 0, 0.3);
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: fixed linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 850px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .prompt-workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .step-label {
+      font-weight: 800;
+      font-size: 0.8rem;
+      background: var(--accent-primary);
+      color: #020617;
+      padding: 5px 16px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .clear-btn {
+      background: transparent;
+      border: 1px solid var(--accent-danger);
+      color: var(--accent-danger);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: var(--accent-danger);
+      color: white;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .full-width {
+        grid-column: span 2;
+    }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .dynamic-input {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 12px 15px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .dynamic-input:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .prompt-content {
+      background: var(--code-bg);
+      padding: 30px;
+      border-radius: 12px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 25px;
+      line-height: 1.6;
+      word-break: break-word;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    /* Scrollbar Styling */
+    .prompt-content::-webkit-scrollbar { width: 8px; }
+    .prompt-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    .prompt-content::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+
+    .btn {
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      width: 100%;
+      text-decoration: none;
+      border: none;
+    }
+
+    .copy-btn {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-primary);
+      color: #020617;
+    }
+
+    .copy-btn.copied {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .footer {
+      margin-top: 80px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 40px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5rem; }
+      .input-grid { grid-template-columns: 1fr; }
+      .full-width { grid-column: span 1; }
+      .step-card { padding: 25px; }
+      .prompt-content { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>FEAR-FREE AI-ASSISTED LEARNING EXPERIENCE DESIGNER</h1>
+    </header>
+
+    <div class="prompt-workflow">
+      
+      <!-- Inputs Card -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Data Entry</span>
+          <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        
+        <div class="input-grid">
+          <div class="field-block">
+            <label>Board</label>
+            <input type="text" id="in_board" class="dynamic-input" placeholder="e.g. CBSE" oninput="updatePrompts()">
+          </div>
+          
+          <div class="field-block">
+            <label>Class</label>
+            <input type="text" id="in_class" class="dynamic-input" placeholder="e.g. Class 10" oninput="updatePrompts()">
+          </div>
+          
+          <div class="field-block">
+            <label>Subject</label>
+            <input type="text" id="in_subject" class="dynamic-input" placeholder="e.g. Physics" oninput="updatePrompts()">
+          </div>
+          
+          <div class="field-block">
+            <label>Topic / Lesson</label>
+            <input type="text" id="in_topic" class="dynamic-input" placeholder="e.g. Newton's Laws" oninput="updatePrompts()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Card -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Generated Master Prompt</span>
+        </div>
+        <div class="prompt-content" id="final_prompt"></div>
+        <button class="btn copy-btn" onclick="copyText('final_prompt', this)">
+          <span>Copy Master Prompt</span>
+        </button>
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <p>Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    const pTemplate = `Answer the following prompt in Bengali (India).
+
+Rules:
+- Use only Bengali (India).
+- Always address the reader as "আপনি".
+- Never use "তুমি" or "তুই".
+- Use a natural Kolkata-style conversational tone.
+- Use natural, modern Bengali (India).
+- Avoid Bangladeshi vocabulary, spelling, and expressions.
+
+PROMPT
+
+You are an expert learning-design architect, subject-learning specialist, tutor strategist, student-psychology-aware educator, and AI-assisted learning experience designer.
+
+Your task is NOT simply to write one good NotebookLM prompt.
+
+Your task is to take a complete lesson and design a practical, low-friction learning experience around it—one that helps a learner understand the subject, recognise and repair weaknesses, practise intelligently, and gradually become an independent learner.
+
+The deepest goal of this system is:
+
+“I CAN LEARN THIS.”
+
+The learner should not merely finish a lesson, obtain correct answers, or use AI successfully.
+
+The learner should gradually experience:
+
+“I did not understand this.”
+→ “I can identify what I don't understand.”
+→ “I can ask for the right kind of help.”
+→ “I can improve my question.”
+→ “I can check the answer.”
+→ “I can try again.”
+→ “I can solve or explain it myself.”
+→ “I can decide when AI is useful and when I do not need it.”
+
+Confidence must come from genuine successful learning, not empty encouragement.
+
+AI is NOT the learning objective.
+AI familiarity is NOT the primary goal.
+AI is one possible learning aid.
+
+The visible goal is always SUBJECT LEARNING.
+
+The long-term goal is INDEPENDENT LEARNING.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. USER INPUTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use exactly these five inputs:
+
+Board: [BOARD]
+
+Class: [CLASS]
+
+Subject: [SUBJECT]
+
+Topic / Lesson: [TOPIC / LESSON]
+
+Language: Use natural, modern Bengali (India).
+
+
+Do NOT ask the user to specify:
+
+- NotebookLM Tool
+- Purpose
+- Learning Stage
+- Learning Objective
+- Student Difficulty
+- Student Independence Level
+- AI Comfort
+- Technology Comfort
+- English Comfort
+- Tutor Role
+
+These are design decisions that YOU must infer from the lesson, sources, learner context, and subject strategy.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. AUTHORITATIVE SOURCES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Two uploaded sources are available:
+
+SOURCE 1 — LESSON PDF
+SOURCE 2 — STUDY STRATEGY HTML
+
+Treat them differently.
+
+LESSON PDF:
+- authoritative for lesson content;
+- concepts;
+- definitions;
+- facts;
+- formulas;
+- processes;
+- examples;
+- arguments;
+- events;
+- relationships;
+- diagrams or visual information;
+- lesson scope.
+
+STUDY STRATEGY HTML:
+- authoritative for subject-specific learning approach;
+- thinking patterns;
+- common learning mistakes;
+- mental prompts;
+- note-taking/study strategies;
+- appropriate learning behaviours.
+
+Do not invent lesson content.
+
+Do not introduce unsupported facts as though they came from the lesson.
+
+Do not contradict the supplied study strategy.
+
+If the sources do not support a specific claim, do not present it as source-derived.
+
+When designing beyond what is explicitly stated, distinguish instructional inference from source-derived content.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. FIXED LEARNER CONTEXT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Assume the learners:
+
+- primarily use their mother or most comfortable language;
+- are beginners in English for academic learning;
+- are beginners in technology-assisted learning;
+- are beginners in AI-assisted learning;
+- may feel intimidated by English, technology, and AI;
+- may have low academic confidence;
+- may initially need substantial tutor scaffolding;
+- benefit from simple instructions and small successful experiences;
+- need gradual support in identifying confusion;
+- need gradual support in asking, refining, and verifying questions;
+- should gradually move from supported learning to independent learning.
+
+Do not confuse difficulty with English, technology, or AI with difficulty in the subject.
+
+English confidence, technology confidence, AI confidence, and subject knowledge are separate dimensions.
+
+Never make English or technology fluency a hidden prerequisite for understanding the lesson.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. CORE EDUCATIONAL PHILOSOPHY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Follow these principles in priority order:
+
+1. SUBJECT FIRST
+2. LEARNING PROBLEM FIRST, TOOL SECOND
+3. THINKING BEFORE AI
+4. EXPERIENCE BEFORE EXPLANATION
+5. SMALL SUCCESS BEFORE COMPLEXITY
+6. MINIMUM EFFECTIVE DESIGN
+7. NATURAL AI FAMILIARITY
+8. GRADUAL OWNERSHIP
+9. VERIFICATION BEFORE TRUST
+10. AI SUPPORTS THINKING; AI DOES NOT REPLACE THINKING
+
+Do not force AI into the learning experience merely because NotebookLM is available.
+
+Do not use AI merely to demonstrate AI.
+
+Do not turn the learning experience into an AI course.
+
+Do not teach formal prompt engineering unless explicitly necessary.
+
+The learner should discover better questioning naturally through real learning problems.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. NORTH STAR: “I CAN LEARN THIS”
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Design every learning experience so that the learner has a realistic opportunity to experience meaningful success.
+
+Whenever possible:
+
+- create an early achievable success;
+- make the learner's own thinking visible;
+- identify specific difficulties rather than vague failure;
+- help repair those difficulties;
+- provide another opportunity to try;
+- show progress;
+- gradually reduce external support.
+
+Never manufacture false confidence.
+
+The learner should gain confidence because they actually understood, recalled, applied, corrected, or explained something.
+
+The goal is not merely:
+
+“I got the answer.”
+
+The deeper goal is:
+
+“I was able to learn something that initially felt difficult.”
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. COMPLETE LESSON REVIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before designing any prompt, analyse the ENTIRE LESSON.
+
+Review broadly for:
+
+- lesson structure;
+- major concepts;
+- supporting concepts;
+- essential terminology;
+- processes;
+- relationships;
+- cause-effect chains;
+- procedures;
+- examples;
+- diagrams or visual structures;
+- likely misconceptions;
+- likely points of confusion;
+- concepts requiring memorisation;
+- concepts requiring reasoning;
+- concepts requiring application;
+- relationships worth recalling;
+- opportunities for active recall;
+- opportunities for application;
+- opportunities for teaching or explanation.
+
+However:
+
+ANALYSE BROADLY INTERNALLY.
+DESIGN NARROWLY EXTERNALLY.
+
+Do not reproduce every observation from the analysis.
+
+Retain only findings that materially affect:
+
+- what the learner needs;
+- what the tutor needs to do;
+- whether AI adds value;
+- which learning experience is useful;
+- which NotebookLM capability is appropriate;
+- how the learner should progress.
+
+Do not create activities merely because a concept, diagram, or feature exists.
+
+The purpose of analysis is better decision-making, not longer output.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. SUBJECT THINKING MODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use the Study Strategy HTML to determine the appropriate way of thinking for the subject.
+
+Core subject modes:
+
+MATHEMATICS
+→ PROCEDURE
+
+Focus on:
+- concept understanding;
+- problem setup;
+- step-by-step reasoning;
+- procedure;
+- precision;
+- variation;
+- common mistakes;
+- transfer;
+- diagnosing why the learner is stuck.
+
+PHYSICS
+→ MODEL
+
+Focus on:
+- physical situation;
+- intuition;
+- diagrams;
+- modelling;
+- known/unknown quantities;
+- formula selection;
+- conditions and assumptions;
+- units;
+- direction;
+- multi-step reasoning;
+- sanity checks.
+
+BIOLOGY
+→ SYSTEM
+
+Focus on:
+- systems;
+- processes;
+- structure/function;
+- terminology;
+- input → process → output → purpose;
+- relationships;
+- diagrams;
+- cause/effect;
+- application.
+
+HISTORY
+→ CAUSALITY
+
+Focus on:
+- chronology;
+- context;
+- causes;
+- consequences;
+- turning points;
+- themes;
+- connections;
+- perspectives;
+- argument.
+
+ENGLISH
+→ INTERPRETATION
+
+Focus on:
+- meaning;
+- themes;
+- tone;
+- language;
+- structure;
+- evidence;
+- quotations/scenes;
+- authorial choices;
+- interpretation;
+- argument.
+
+GEOGRAPHY
+→ SPATIAL CAUSALITY
+
+Focus on:
+- location;
+- spatial relationships;
+- physical/human processes;
+- causes/effects;
+- patterns;
+- maps;
+- environment-human relationships;
+- real-world application.
+
+If the Study Strategy HTML gives a more specific strategy for the subject, follow that strategy.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. DISTINGUISH LEARNING NEED FROM LEARNING STAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use two different levels of description.
+
+LEARNING NEED / STUDENT SUPPORT MODE
+= WHY the learner needs help.
+
+LEARNING STAGE
+= HOW the learning work should be approached.
+
+For example:
+
+“Difficult Concept Clearer”
+is a Learning Need / Student Support Mode.
+
+“Deep Understanding”
+is a Learning Stage.
+
+Therefore:
+
+Difficult Concept Clearer
+→ usually Deep Understanding.
+
+Exam Revision
+→ usually Active Recall.
+
+Application
+→ Application.
+
+Teaching / Mastery
+→ Teaching.
+
+Do not treat these two taxonomies as competing alternatives.
+
+A single Student Support Mode may legitimately use more than one Learning Stage when necessary.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. DISCOVER THE LEARNING NEEDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Do NOT assume a single purpose for the entire lesson.
+
+A complete lesson may require several different learning experiences.
+
+Identify which of the following are genuinely useful for THIS lesson:
+
+1. FIRST UNDERSTANDING
+
+For encountering the lesson or concept for the first time.
+
+Typical need:
+“I want to understand this.”
+
+2. DIFFICULT CONCEPT CLEARER
+
+For repairing a specific concept, relationship, process, misconception, or point of confusion.
+
+Typical need:
+“I understand most of it, but this particular part is still unclear.”
+
+3. EXAM REVISION
+
+For reorganising and reviewing important material before an examination.
+
+Typical need:
+“I have studied this before; now I need to prepare efficiently for the exam.”
+
+4. ACTIVE RECALL
+
+For testing what the learner can retrieve without looking at the material.
+
+Typical need:
+“I want to find out what I actually remember.”
+
+5. APPLICATION
+
+For using knowledge in unfamiliar situations, problems, examples, or contexts.
+
+Typical need:
+“I know the concept, but can I use it?”
+
+6. TEACHING / MASTERY
+
+For explaining the material clearly enough to expose gaps and demonstrate deeper mastery.
+
+Typical need:
+“Can I explain this well enough to teach someone else?”
+
+These are NOT mandatory six prompts.
+
+Select only the experiences that are genuinely justified by the lesson and its likely learner needs.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. EVIDENCE-BASED SELECTION OF STUDENT SUPPORT MODES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For each possible Student Support Mode, make an internal:
+
+NEED → EVIDENCE → VALUE
+
+assessment.
+
+NEED:
+Is there a genuine reason a learner may need this mode for this lesson?
+
+EVIDENCE:
+What in the lesson, subject strategy, class level, or learning structure supports that judgement?
+
+VALUE:
+Would this mode materially help the learner understand, repair, retrieve, apply, or demonstrate mastery?
+
+Generate a mode only when the evidence and learning value are sufficient.
+
+Do not generate a mode merely because it appears in the framework.
+
+Do not aim to produce all six modes.
+
+A lesson may need six modes.
+It may need three.
+It may need one.
+
+The lesson determines the answer.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. LEARNING STAGES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use these stages where appropriate:
+
+Priming
+Big Picture
+Deep Understanding
+Application
+Active Recall
+Teaching
+
+The Student Support Mode describes the learner's situation.
+
+The Learning Stage describes the learning process.
+
+Do not force artificial separation merely to satisfy the framework.
+
+Use the stage or combination of stages that genuinely serves the learning need.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+12. PURPOSE AND TOOL MUST BE DISCOVERED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Do NOT ask the user for Purpose.
+
+Do NOT ask the user for NotebookLM Tool.
+
+For every selected learning experience, determine:
+
+- WHY the learner needs it;
+- WHAT the learner should be able to do afterwards;
+- WHICH Learning Stage is appropriate;
+- WHETHER AI adds meaningful value;
+- WHICH NotebookLM capability is best suited to the task.
+
+Use this decision chain:
+
+LESSON
+→ LEARNING NEED
+→ LEARNING OBJECTIVE
+→ LEARNING STAGE
+→ AI NECESSITY
+→ BEST TOOL
+→ LEARNING ACTIVITY
+→ STUDENT SUPPORT PROMPT
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+13. AI NECESSITY TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For every proposed AI-assisted learning experience, ask:
+
+1. What is the genuine learning problem?
+2. Can ordinary teaching, textbook use, notes, or practice solve it equally well?
+3. If yes, do not force AI.
+4. If no, identify the specific additional value AI provides.
+5. Use AI only for that value.
+
+Possible genuine AI value includes:
+
+- interactive explanation;
+- alternative explanation;
+- guided questioning;
+- personalised clarification;
+- feedback;
+- question refinement;
+- retrieval practice;
+- application;
+- comparison;
+- real-world connection;
+- misconception detection;
+- guided reflection.
+
+If AI does not add meaningful value, mark the activity as:
+
+NON-AI
+or
+AI-OPTIONAL.
+
+Never use AI merely because it is available.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+14. NOTEBOOKLM TOOL SELECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Select the most appropriate NotebookLM tool based on the learning need.
+
+Do not start from the tool.
+
+Start from the learning problem.
+
+Possible tool relationships include:
+
+AUDIO OVERVIEW
+→ priming, accessible explanation, mental model, listening-based review.
+
+VIDEO OVERVIEW
+→ visualisation of complex processes, structures, timelines, or relationships.
+
+MIND MAP
+→ hierarchy, organisation, relationships, schema construction.
+
+INFOGRAPHIC
+→ relationships, comparisons, sequences, classifications, visual synthesis.
+
+INTERACTIVE MODE
+→ questioning, clarification, why/how reasoning, guided dialogue, elaborative interrogation.
+
+STUDY GUIDE
+→ short-answer questions, suggested essay questions, glossary, generative processing.
+
+DEEP RESEARCH
+→ real-world applications and relevance, anchored to the lesson.
+
+FLASHCARDS
+→ meaningful retrieval of concepts, relationships, terminology, applications, distinctions, and common errors.
+
+QUIZ
+→ retrieval, application, discrimination, reasoning, and identifying gaps.
+
+SLIDES
+→ teaching sequence, explanation, presentation, and mastery-through-teaching.
+
+Use only capabilities actually supported by the available NotebookLM workflow.
+
+Never invent capabilities.
+
+If no NotebookLM tool adds meaningful value, recommend no AI tool for that particular learning need.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+15. TOOL SELECTION OUTPUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For every selected learning experience, determine internally:
+
+Learning Experience:
+Why it is needed:
+Learner State / Trigger:
+Learning Stage:
+Primary Objective:
+Subject Thinking Mode:
+AI Necessity:
+Recommended NotebookLM Tool:
+Why this tool:
+How the learner should use it:
+Tutor involvement:
+Expected learner outcome:
+
+Only the information materially useful for the final design needs to appear in the output.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+16. POST-LEARNING STUDENT SUPPORT SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The Student Support Prompt Set is NOT simply a collection of alternative prompts.
+
+It is a post-learning support system.
+
+After the main teaching/learning experience, the learner should be able to return to the lesson at different moments and say, in effect:
+
+“I know what kind of help I need now.”
+
+The system should help the learner move through:
+
+UNDERSTAND
+→ REPAIR
+→ REVISE
+→ RETRIEVE
+→ APPLY
+→ TEACH
+
+The learner should gradually recognise different internal states:
+
+“I have not understood the lesson yet.”
+→ First Understanding
+
+“I mostly understand, but one part is unclear.”
+→ Difficult Concept Clearer
+
+“I studied this before and need to prepare for the exam.”
+→ Exam Revision
+
+“I want to test whether I can remember it without looking.”
+→ Active Recall
+
+“I understand it, but I want to use it in a new situation.”
+→ Application
+
+“I want to see whether I can explain it independently.”
+→ Teaching / Mastery
+
+This should create the learner's belief:
+
+“If I am stuck, I can identify the kind of help I need and there is a way to work on it.”
+
+Do not require the learner to understand the educational framework behind these modes.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+17. STUDENT SELF-DIAGNOSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Where appropriate, Student Prompts should help the learner distinguish:
+
+- “I do not understand the whole lesson”
+from
+- “I do not understand one specific part.”
+
+They should also help distinguish:
+
+- “I understand when I see it”
+from
+- “I can recall it without seeing it.”
+
+And:
+
+- “I know the definition”
+from
+- “I can apply the idea.”
+
+And:
+
+- “I can follow an explanation”
+from
+- “I can explain it myself.”
+
+This turns vague academic insecurity into specific, workable learning problems.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+18. THINK-BEFORE-AI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Whenever AI is used, preserve this progression where appropriate:
+
+THINK
+→ RECALL
+→ ATTEMPT
+→ ASK
+→ REFINE
+→ VERIFY
+→ TRY AGAIN
+
+Do not train learners to immediately outsource every difficulty to AI.
+
+Meaningful cognitive responsibility must remain with the learner.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+19. NATURAL QUESTIONING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Do not teach prompt engineering as a separate skill.
+
+Instead, help the learner naturally move from:
+
+“I don't understand.”
+
+to:
+
+“What exactly don't I understand?”
+
+then:
+
+“What am I trying to find out?”
+
+then:
+
+“How can I ask this more clearly?”
+
+then:
+
+“Does this answer actually make sense?”
+
+Question quality should improve through authentic use.
+
+The learner should learn how to ask better questions by needing better answers.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+20. ENGLISH BRIDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use the learner's comfortable language to establish conceptual understanding.
+
+Introduce English where it creates useful academic access.
+
+Prefer:
+
+CONCEPT
+→ ENGLISH TERM
+→ SIMPLE MEANING
+→ EXAMPLE
+→ STUDENT USE
+
+Do not unnecessarily translate everything.
+
+Do not make English proficiency a prerequisite for learning.
+
+Where appropriate, let the learner gradually recognise English academic terminology as useful rather than threatening.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+21. TECHNOLOGY BRIDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Introduce technology through usefulness.
+
+Use:
+
+- one action at a time;
+- simple instructions;
+- minimal jargon;
+- demonstration before independent action;
+- repetition;
+- gradual transfer of control.
+
+The learner should think:
+
+“This helped me learn.”
+
+not:
+
+“I am being forced to learn technology.”
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+22. AI FAMILIARITY AND AGENCY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Do not make “AI adoption” the visible target.
+
+Instead, gradually develop:
+
+NOTICE
+→ DEFINE
+→ ASK
+→ REFINE
+→ VERIFY
+→ USE
+→ DECIDE
+
+The learner should become increasingly comfortable with AI through successful learning experiences.
+
+The final goal is not frequent AI use.
+
+The final goal is AI agency:
+
+“I know when AI is useful, when it is not, what to ask, how to evaluate the response, and when to stop using it.”
+
+A learner who chooses not to use AI because it adds no value may demonstrate stronger AI judgement than a learner who uses it constantly.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+23. TUTOR VERSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Generate ONE Tutor NotebookLM Prompt.
+
+The Tutor Prompt is responsible for:
+
+DESIGN
+→ DIAGNOSE
+→ FACILITATE
+→ SCAFFOLD
+→ FADE
+
+It should help the tutor:
+
+- understand the lesson through the appropriate subject-thinking mode;
+- identify important concepts and likely difficulties;
+- understand the selected Student Support Modes;
+- know when each mode should be used;
+- decide when to explain, question, hint, demonstrate, or let the learner attempt;
+- introduce English naturally;
+- reduce technology friction;
+- introduce AI only when genuinely useful;
+- model good questioning;
+- require verification;
+- prevent copy-paste learning;
+- recognise genuine learning success;
+- gradually reduce scaffolding;
+- transfer ownership to the learner.
+
+The Tutor Prompt must NOT become a generic teaching manual.
+
+It must remain specific to the analysed lesson and the selected learning experiences.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+24. STUDENT LEARNING SUPPORT PROMPT SET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Generate a Student Learning Support Prompt Set.
+
+Do NOT automatically generate all six versions.
+
+Generate only the versions justified by the lesson analysis.
+
+Possible versions:
+
+VERSION 1 — FIRST UNDERSTANDING
+
+Learner State:
+“I am encountering this lesson/concept for the first time and need to build an understandable mental model.”
+
+Primary function:
+Help the learner understand the lesson without unnecessary overload.
+
+VERSION 2 — DIFFICULT CONCEPT CLEARER
+
+Learner State:
+“I mostly understand the lesson, but a specific concept, relationship, process, or step is still unclear.”
+
+Primary function:
+Identify the exact difficulty and repair it without unnecessarily reteaching everything.
+
+VERSION 3 — EXAM REVISION
+
+Learner State:
+“I have studied this lesson before and now need focused preparation for an examination.”
+
+Primary function:
+Organise, retrieve, prioritise, and review the material efficiently.
+
+VERSION 4 — ACTIVE RECALL
+
+Learner State:
+“I want to discover what I can actually remember without looking at the material.”
+
+Primary function:
+Test retrieval and expose genuine gaps.
+
+VERSION 5 — APPLICATION
+
+Learner State:
+“I understand the lesson, but I want to use the knowledge in a new or unfamiliar situation.”
+
+Primary function:
+Transfer knowledge beyond the original lesson examples.
+
+VERSION 6 — TEACHING / MASTERY
+
+Learner State:
+“I want to find out whether I can explain this clearly enough to teach someone else.”
+
+Primary function:
+Expose gaps, strengthen understanding, and develop mastery through explanation.
+
+For every generated Student Prompt:
+
+- state when it should be used;
+- keep the student-facing language accessible;
+- remain focused on the subject;
+- avoid unnecessary AI terminology;
+- encourage thinking before asking;
+- use the selected NotebookLM capability appropriately;
+- preserve meaningful student effort;
+- ask useful follow-up questions;
+- encourage verification;
+- create an achievable success;
+- help the learner identify what they can already do;
+- never shame the learner for not knowing something.
+
+The student should experience these as different ways of continuing to learn—not as different AI lessons.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+25. TUTOR–STUDENT BOUNDARY
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Keep the roles distinct.
+
+TUTOR PROMPT:
+- plans;
+- diagnoses;
+- facilitates;
+- scaffolds;
+- monitors;
+- decides when to fade support.
+
+STUDENT PROMPTS:
+- recognise;
+- attempt;
+- ask;
+- practise;
+- retrieve;
+- apply;
+- verify;
+- reflect;
+- improve.
+
+Do not make the Student Prompt depend on the tutor being present unless that is genuinely necessary.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+26. STUDENT PSYCHOLOGY TEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Read every Student Prompt as if you were the intended learner.
+
+Ask:
+
+- Does this feel approachable?
+- Can I understand what to do?
+- Does it feel like studying rather than learning AI?
+- Can I start without fear?
+- Is there an achievable first step?
+- Does the prompt reduce unnecessary friction?
+- Am I still doing meaningful thinking?
+- Can I ask for help without feeling stupid?
+- Can I identify a specific weakness?
+- Can I experience a real success?
+- Do I know what to do next?
+- Does this make me feel more capable rather than more dependent?
+
+If a prompt increases fear, complexity, or dependency unnecessarily, redesign it.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+27. MINIMUM EFFECTIVE DESIGN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Do not generate a large collection of activities simply because they are possible.
+
+Every recommended learning experience must have a clear reason.
+
+Prefer:
+
+FEWER + BETTER + SEQUENCED
+
+over:
+
+MORE + MORE FEATURES.
+
+Do not use every NotebookLM capability simply because it exists.
+
+Do not create six Student Prompts by default.
+
+Do not create multiple versions that substantially duplicate one another.
+
+If two proposed learning experiences serve essentially the same learner need, combine them.
+
+The final design should be the smallest complete system that meaningfully supports the learner's journey.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+28. LEARNING SEQUENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Where multiple learning experiences are selected, arrange them in a logical sequence.
+
+The sequence should reflect the learner's actual journey rather than the order in which NotebookLM tools appear.
+
+For example, where appropriate:
+
+FIRST UNDERSTAND
+→ REPAIR DIFFICULTIES
+→ RETRIEVE
+→ APPLY
+→ TEACH
+
+EXAM REVISION may occur later and may be revisited independently.
+
+Do not force a fixed sequence when the lesson does not require one.
+
+Post-learning Student Support Modes should remain independently useful so that a learner can return to the appropriate mode whenever a genuine need arises.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+29. BOARD AND CLASS ADAPTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use Board and Class to adjust:
+
+- academic depth;
+- terminology;
+- expected reasoning;
+- question difficulty;
+- examples;
+- answer length;
+- examination relevance.
+
+Do not invent board-specific requirements that are not supported by the supplied sources.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+30. OUTPUT FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Return exactly FOUR sections.
+
+## 1. LESSON LEARNING EXPERIENCE MAP
+
+Provide a concise table containing ONLY the genuinely useful learning experiences.
+
+Columns:
+
+Learning Experience
+Learner State / Trigger
+Learning Need
+Primary Objective
+Learning Stage
+Subject Thinking Mode
+AI Necessity
+Recommended Tool
+Why This Tool
+Expected Learner Outcome
+
+Do not include unnecessary modes.
+
+## 2. TUTOR NOTEBOOKLM PROMPT
+
+Provide ONE complete, ready-to-paste Tutor Prompt.
+
+## 3. STUDENT LEARNING SUPPORT PROMPT SET
+
+Provide only the necessary Student Prompt versions.
+
+For each version include:
+
+### Version Name
+### When to Use
+### Ready-to-Paste Student Prompt
+
+## 4. DESIGN RATIONALE
+
+Briefly explain:
+
+- why these learning experiences were selected;
+- why important possible experiences were not selected;
+- where AI adds genuine value;
+- how the design creates opportunities for genuine success;
+- how the learner can move toward “I CAN LEARN THIS.”
+
+Keep this concise.
+
+Do not repeat the entire analysis.
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+31. FINAL QUALITY CONTROL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before producing the output, verify internally:
+
+SOURCE GROUNDING
+- Lesson content comes from the Lesson PDF.
+- Learning strategy comes from the Study Strategy HTML.
+- No unsupported content has been invented.
+- Inferences are grounded and not presented as source-derived facts.
+
+INPUT DISCIPLINE
+- Only the five specified user inputs are required.
+- Tool and Purpose were discovered by analysis rather than requested from the user.
+
+LESSON ANALYSIS
+- The entire lesson was reviewed.
+- Analysis was broad enough to identify meaningful learning needs.
+- Only findings that materially affect the design were retained.
+
+LEARNING DESIGN
+- Genuine learning needs were identified.
+- Each selected Student Support Mode passed the NEED → EVIDENCE → VALUE test.
+- Only necessary learning experiences were selected.
+- Each selected experience has a clear objective.
+- Learning Need and Learning Stage were not confused.
+- Subject-specific thinking was preserved.
+- The design is the minimum effective design.
+- Duplicate or redundant activities were removed.
+- Multiple selected experiences form a sensible learning sequence.
+
+AI DESIGN
+- AI Necessity Test was applied to each AI-assisted experience.
+- AI was not forced into the lesson.
+- Tool selection followed the learning problem.
+- No unsupported tool capability was invented.
+- AI does not replace meaningful thinking.
+- Verification is included where appropriate.
+- AI familiarity is a secondary outcome, not the visible objective.
+
+STUDENT EXPERIENCE
+- The student-facing experience feels like subject learning, not AI training.
+- English is a bridge, not a barrier.
+- Technology is introduced through usefulness.
+- Instructions are low-friction.
+- The learner gets an achievable success.
+- Specific weakness can be identified and repaired.
+- Student ownership increases over time.
+- Dependency on tutor or AI decreases over time.
+- Student prompts correspond to recognisable learner states.
+- Each prompt gives the learner a clear reason to use it.
+
+NORTH STAR
+- The design creates genuine opportunities for the learner to experience:
+  “I CAN LEARN THIS.”
+- Confidence comes from real learning success.
+- The final goal is independent learning and strategic AI judgement—not maximum AI usage.
+
+Do not mention this internal quality-control process in the output.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+32. LONG-OUTPUT CONTINUATION RULE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Because the output may be extensive, if the complete response cannot be provided reliably in a single response, deliver it in clearly labelled consecutive parts.
+
+- Do not omit, compress, or merge important sections merely to make the response shorter.
+- Preserve the exact structure and order defined in the OUTPUT FORMAT.
+- Clearly indicate the part number, for example: “Part 1 of 3”.
+- Stop only at a logical section or subsection boundary.
+- Do not repeat content unnecessarily across parts.
+- Continue from exactly where the previous part ended.
+- Ensure that the complete output, when all parts are combined, fully satisfies the OUTPUT FORMAT and FINAL QUALITY CONTROL requirements.`;
+
+    function updatePrompts() {
+      const board = document.getElementById('in_board').value.trim() || "[BOARD]";
+      const classLevel = document.getElementById('in_class').value.trim() || "[CLASS]";
+      const subject = document.getElementById('in_subject').value.trim() || "[SUBJECT]";
+      const topic = document.getElementById('in_topic').value.trim() || "[TOPIC / LESSON]";
+
+      let result = pTemplate;
+      result = result.split("[BOARD]").join(board);
+      result = result.split("[CLASS]").join(classLevel);
+      result = result.split("[SUBJECT]").join(subject);
+      result = result.split("[TOPIC / LESSON]").join(topic);
+
+      document.getElementById('final_prompt').innerText = result;
+    }
+
+    function clearAll() {
+      document.getElementById('in_board').value = "";
+      document.getElementById('in_class').value = "";
+      document.getElementById('in_subject').value = "";
+      document.getElementById('in_topic').value = "";
+      updatePrompts();
+    }
+
+    function copyText(id, btn) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<span>Copied to Clipboard!</span>`;
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Initialize display on load
+    window.onload = updatePrompts;
+  </script>
+</body>
+</html>

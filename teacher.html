@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher's Zone - Prompt Generator</title>
+  
+  <!-- Facebook Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'YOUR_PIXEL_ID_HERE'); 
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID_HERE&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Facebook Pixel Code -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-gradient-start: #020617;
+      --bg-gradient-end: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.4);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #22d3ee;
+      --accent-hover: #67e8f9;
+      --accent-success: #10b981;
+      --accent-danger: #f43f5e;
+      --code-bg: rgba(0, 0, 0, 0.3);
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: fixed linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--accent-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+    }
+
+    .input-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(12px);
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px 15px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .prompt-workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .step-label {
+      font-weight: 800;
+      font-size: 0.8rem;
+      background: var(--accent-primary);
+      color: #020617;
+      padding: 5px 16px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .prompt-content {
+      background: var(--code-bg);
+      padding: 30px;
+      border-radius: 12px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 25px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .btn {
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      width: 100%;
+      text-decoration: none;
+      border: none;
+      text-transform: uppercase;
+    }
+
+    .copy-btn {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-primary);
+      color: #020617;
+    }
+
+    .copy-btn.copied {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .footer {
+      margin-top: 80px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 40px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2rem; }
+      .step-card { padding: 25px; }
+      .prompt-content { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Teacher's Zone</h1>
+      <p class="subtitle">Instructional Asset Engine</p>
+    </header>
+
+    <!-- Inputs -->
+    <div class="input-section">
+      <div class="input-grid">
+        <div class="field-block">
+          <label>Board</label>
+          <input type="text" id="in_board" placeholder="e.g., WBBSE" oninput="updateAll()">
+        </div>
+        <div class="field-block">
+          <label>Class</label>
+          <input type="text" id="in_class" placeholder="e.g., Class 9" oninput="updateAll()">
+        </div>
+        <div class="field-block">
+          <label>Subject</label>
+          <input type="text" id="in_subject" placeholder="e.g., Physical Science" oninput="updateAll()">
+        </div>
+        <div class="field-block">
+          <label>Chapter</label>
+          <input type="text" id="in_chapter" placeholder="e.g., Force and Motion" oninput="updateAll()">
+        </div>
+        <div class="field-block">
+          <label>Topic/Part</label>
+          <input type="text" id="in_topic" placeholder="e.g., Newton's Third Law" oninput="updateAll()">
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-workflow">
+      
+      <!-- Prompt 1 -->
+      <div class="step-card">
+        <div class="step-header"><span class="step-label">Prompt #1: Teaching Plan</span></div>
+        <div class="prompt-content" id="p1"></div>
+        <button class="btn copy-btn" onclick="copyText('p1', this)"><span>Copy Prompt #1</span></button>
+      </div>
+
+      <!-- Prompt 2 -->
+      <div class="step-card">
+        <div class="step-header"><span class="step-label">Prompt #2: Teaching Content</span></div>
+        <div class="prompt-content" id="p2"></div>
+        <button class="btn copy-btn" onclick="copyText('p2', this)"><span>Copy Prompt #2</span></button>
+      </div>
+
+      <!-- Prompt 3 -->
+      <div class="step-card">
+        <div class="step-header"><span class="step-label">Prompt #3: Study Notes</span></div>
+        <div class="prompt-content" id="p3"></div>
+        <button class="btn copy-btn" onclick="copyText('p3', this)"><span>Copy Prompt #3</span></button>
+      </div>
+
+      <!-- Prompt 4 -->
+      <div class="step-card">
+        <div class="step-header"><span class="step-label">Prompt #4: Assignment</span></div>
+        <div class="prompt-content" id="p4"></div>
+        <button class="btn copy-btn" onclick="copyText('p4', this)"><span>Copy Prompt #4</span></button>
+      </div>
+
+      <!-- Prompt 5 -->
+      <div class="step-card">
+        <div class="step-header"><span class="step-label">Prompt #5</span></div>
+        <div class="prompt-content" id="p5">West Bengal Board of Secondary Education</div>
+        <button class="btn copy-btn" onclick="copyText('p5', this)"><span>Copy Prompt #5</span></button>
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <p>Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    const templates = {
+      p1: `আমি [Board]-এর [Class]-এর [Subject] পড়াই।
+
+[Chapter]-এর [Topic/Part] পড়ানোর জন্য একটি সহজ ও বাস্তবসম্মত Teaching Plan তৈরি করুন।
+
+আপলোড করা “Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স”-কে এই Teaching Plan তৈরির reference হিসেবে ব্যবহার করুন। বিশেষ করে এই Topic/Part-টি কীভাবে শেখানো, বোঝানো, practice করানো এবং recall করানো ভালো হবে—সেই approach নির্ধারণে source-এর প্রাসঙ্গিক অংশ অনুসরণ করুন।
+
+আমার ছাত্রছাত্রীরা Class 8–10-এর। তারা ইংরেজিতে দুর্বল এবং computer ও internet ব্যবহারে খুব স্বচ্ছন্দ নয়। অনেকেই পড়াশোনায় পিছিয়ে থাকার কারণে আত্মবিশ্বাসের অভাব ও ভয় নিয়ে থাকে। তাই Teaching Plan এমনভাবে তৈরি করুন যাতে শিক্ষক সহজে, ধাপে ধাপে এবং উৎসাহদায়ক ও সম্মানজনকভাবে বিষয়টি শেখাতে পারেন।
+
+প্ল্যানে রাখুন:
+
+* কী কী শেখাব
+* কোন ক্রমে শেখাব
+* প্রতিটি অংশে কী বোঝাব
+* কোথায় ছাত্রদের বোঝা যাচাই করব
+* কোথায় practice করাব
+* শেষে কীভাবে recap করব`,
+
+      p2: `আমি [Board]-এর [Class]-এর [Subject] পড়াই।
+
+[Chapter]-এর [Topic/Part] পড়ানোর জন্য আমার ছাত্রছাত্রীদের উপযোগী ready-to-use teaching content তৈরি করুন।
+
+আপলোড করা “Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স”-কে এই teaching content তৈরির reference হিসেবে ব্যবহার করুন। বিশেষ করে এই Topic/Part-টি কীভাবে শেখানো, বোঝানো, practice করানো এবং recall করানো ভালো হবে—সেই approach নির্ধারণে source-এর প্রাসঙ্গিক অংশ অনুসরণ করুন।
+
+আমার ছাত্রছাত্রীরা Class 8–10-এর। তারা ইংরেজিতে দুর্বল এবং computer ও internet ব্যবহারে খুব স্বচ্ছন্দ নয়। অনেকেই পড়াশোনায় পিছিয়ে থাকার কারণে আত্মবিশ্বাসের অভাব ও ভয় নিয়ে থাকে। তাই content-এর ভাষা খুব সহজ, পরিষ্কার, উৎসাহদায়ক ও সম্মানজনক রাখুন—যাতে তারা ভয় না পেয়ে বিষয়টি বুঝতে এবং নিজে চেষ্টা করতে পারে।
+
+এতে রাখুন:
+
+* বিষয়টি কী
+* কীভাবে সহজ করে বুঝিয়ে বলব
+* প্রয়োজনীয় example
+* প্রয়োজনীয় diagram, illustration, chart, table বা অন্য উপযুক্ত visual
+* ছাত্রদের করার মতো ছোট প্রশ্ন
+* সাধারণ ভুল বা confusion
+* শেষে একটি ছোট recap
+
+বিষয়টি সহজভাবে বোঝান, কিন্তু [Class]-এর উপযোগী প্রয়োজনীয় academic depth বজায় রাখুন।`,
+
+      p3: `আমি [Board]-এর [Class]-এর [Subject] পড়াই।
+
+[Chapter]-এর [Topic/Part]-এর জন্য আমার ছাত্রছাত্রীদের দেওয়ার মতো সহজ Study Notes তৈরি করুন।
+
+আপলোড করা “Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স”-কে Study Notes তৈরির reference হিসেবে ব্যবহার করুন। বিশেষ করে এই Topic/Part-এ ছাত্রদের কী বুঝতে হবে, কোন সম্পর্ক বা ধারণাগুলিতে জোর দিতে হবে এবং কীভাবে তারা পরে recall ও practice করতে পারবে—সেই approach নির্ধারণে source-এর প্রাসঙ্গিক অংশ অনুসরণ করুন।
+
+আমার ছাত্রছাত্রীরা Class 8–10-এর। তারা ইংরেজিতে দুর্বল এবং অনেকের আত্মবিশ্বাস কম। তাই Notes-এর ভাষা সহজ, পরিষ্কার ও সম্মানজনক রাখুন, যাতে তারা নিজেরা পড়ে বুঝতে পারে।
+
+Notes-এ রাখুন:
+
+* মূল ধারণাগুলি
+* প্রয়োজনীয় সংজ্ঞা/তথ্য
+* গুরুত্বপূর্ণ সম্পর্ক বা নিয়ম
+* প্রয়োজনীয় example
+* প্রয়োজনীয় diagram, illustration, chart বা table
+* যে বিষয়গুলো মনে রাখা দরকার
+* শেষে ছোট একটি recap`,
+
+      p4: `আমি [Board]-এর [Class]-এর [Subject] পড়াই।
+
+[Chapter]-এর [Topic/Part] শেখানোর পরে ছাত্রছাত্রীদের practice করানোর জন্য একটি Assignment তৈরি করুন।
+
+আপলোড করা “Subject × Learning Stage × Tool — স্টাডি ম্যাট্রিক্স”-কে এই Assignment তৈরির reference হিসেবে ব্যবহার করুন। বিশেষ করে এই Topic/Part-এ ছাত্রদের কী ধরনের thinking, understanding, application এবং recall-এর practice দরকার—সেই approach নির্ধারণে source-এর প্রাসঙ্গিক অংশ অনুসরণ করুন।
+
+আমার ছাত্রছাত্রীরা Class 8–10-এর এবং তাদের অনেকের আত্মবিশ্বাস কম। তাই প্রশ্নগুলির ভাষা পরিষ্কার ও সহজ রাখুন, কিন্তু [Class]-এর উপযোগী academic challenge বজায় রাখুন।
+
+প্রশ্নগুলো এমনভাবে সাজান যাতে:
+
+* আগে সহজ প্রশ্ন দিয়ে শুরু হয়
+* তারপর ধীরে ধীরে কঠিন হয়
+* শেখানো মূল ধারণাগুলো practice হয়
+* বিভিন্ন ধরনের প্রশ্ন থাকে
+* ছাত্রকে শুধু মুখস্থ নয়, বুঝে ব্যবহার করতে হয়
+* শেষে কয়েকটি challenge question থাকে`
+    };
+
+    function updateAll() {
+      const board = document.getElementById('in_board').value.trim() || "[Board]";
+      const classLvl = document.getElementById('in_class').value.trim() || "[Class]";
+      const subject = document.getElementById('in_subject').value.trim() || "[Subject]";
+      const chapter = document.getElementById('in_chapter').value.trim() || "[Chapter]";
+      const topic = document.getElementById('in_topic').value.trim() || "[Topic/Part]";
+
+      for (let key in templates) {
+        let content = templates[key]
+          .replace(/\[Board\]/g, board)
+          .replace(/\[Class\]/g, classLvl)
+          .replace(/\[Subject\]/g, subject)
+          .replace(/\[Chapter\]/g, chapter)
+          .replace(/\[Topic\/Part\]/g, topic);
+        
+        document.getElementById(key).innerText = content;
+      }
+    }
+
+    function copyText(id, btn) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<span>Copied to Clipboard!</span>`;
+        btn.classList.add('copied');
+        
+        // Track the copy event in Facebook Pixel
+        if(typeof fbq === 'function') {
+          fbq('track', 'Contact', { content_name: 'Prompt Copy: ' + id });
+        }
+
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    window.onload = updateAll;
+  </script>
+</body>
+</html>
