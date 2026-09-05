@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Audio-Visual Explanation - Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient-start: #020617;
+      --bg-gradient-end: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.4);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #22d3ee;
+      --accent-hover: #67e8f9;
+      --accent-success: #10b981;
+      --accent-danger: #f43f5e;
+      --code-bg: rgba(0, 0, 0, 0.3);
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: fixed linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 850px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--accent-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+    }
+
+    .prompt-workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .step-label {
+      font-weight: 800;
+      font-size: 0.8rem;
+      background: var(--accent-primary);
+      color: #020617;
+      padding: 5px 16px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .clear-btn {
+      background: transparent;
+      border: 1px solid var(--accent-danger);
+      color: var(--accent-danger);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: var(--accent-danger);
+      color: white;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .dynamic-textarea {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 15px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      min-height: 80px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .dynamic-textarea:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .prompt-content {
+      background: var(--code-bg);
+      padding: 30px;
+      border-radius: 12px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 25px;
+      line-height: 1.6;
+      word-break: break-word;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    /* Scrollbar */
+    .prompt-content::-webkit-scrollbar { width: 8px; }
+    .prompt-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    .prompt-content::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+
+    .btn {
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      width: 100%;
+      text-decoration: none;
+      border: none;
+    }
+
+    .copy-btn {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-primary);
+      color: #020617;
+    }
+
+    .copy-btn.copied {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .footer {
+      margin-top: 80px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 40px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; }
+      .step-card { padding: 25px; }
+      .prompt-content { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Audio-Visual Explanation</h1>
+      <p class="subtitle">Google Flow & Veo 3.1 Prompt Engine</p>
+    </header>
+
+    <div class="prompt-workflow">
+      
+      <!-- Inputs Card -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Setup Inputs</span>
+          <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        
+        <div class="input-grid">
+          <div class="field-block">
+            <label>শ্রেণি / শিক্ষার্থীর স্তর: [Class]</label>
+            <textarea id="in_class" class="dynamic-textarea" placeholder="যেমন: নবম শ্রেণি..." oninput="updatePrompts()"></textarea>
+          </div>
+          
+          <div class="field-block">
+            <label>বিষয় / Subject: [Subject]</label>
+            <textarea id="in_subject" class="dynamic-textarea" placeholder="যেমন: ভৌতবিজ্ঞান..." oninput="updatePrompts()"></textarea>
+          </div>
+          
+          <div class="field-block">
+            <label>যে Conceptটি শিখতে চাই: [Concept]</label>
+            <textarea id="in_concept" class="dynamic-textarea" placeholder="যেমন: নিউটনের গতিসূত্র..." oninput="updatePrompts()"></textarea>
+          </div>
+          
+          <div class="field-block">
+            <label>আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়: [Problem]</label>
+            <textarea id="in_problem" class="dynamic-textarea" placeholder="আপনার সমস্যাটি বিস্তারিত লিখুন..." oninput="updatePrompts()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prompt #1 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Prompt #1: Learning Designer</span>
+        </div>
+        <div class="prompt-content" id="p1"></div>
+        <button class="btn copy-btn" onclick="copyText('p1', this)">
+          <span>Copy Prompt #1</span>
+        </button>
+      </div>
+
+      <!-- Prompt #2 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Prompt #2: Execution Plan</span>
+        </div>
+        <div class="prompt-content" id="p2">Please explain how to use these prompts in Google Flow to create the complete video.
+
+Provide a complete, step-by-step execution process, starting with the initial setup and continuing through the final completion of the video.
+
+For every step:
+
+1. Explain exactly what the user needs to do.
+2. Write the instructions as if you are guiding the user live, in real time, while they are using their phone or computer.
+3. Clearly identify where the user needs to click, what they need to select, what they need to enter or upload, and what they should do next.
+4. If a step can be completed or assisted by AI, provide the appropriate AI prompt for that step.
+5. Make each AI prompt practical, ready to copy and paste, and directly usable for completing that specific step.
+6. Do not skip any important setup, configuration, generation, review, editing, export, or finalization step.
+
+At the end of the answer, provide all the AI prompt templates required for the complete workflow as standalone, reusable templates.
+
+Each reusable prompt template must:
+
+* use [placeholders] for all variable information;
+* be fully reusable in a new chat;
+* work for different niches, topics, audiences, or use cases simply by replacing the [placeholders];
+* contain enough context and instructions to work independently without relying on the previous conversation.
+
+## Language and Style
+
+Write the entire answer in spontaneous, natural-sounding modern Bengali as spoken in Kolkata, West Bengal, India.
+
+The Bengali should be easily understandable to a 21-year-old reader while maintaining an internationally professional standard of language.
+
+Use a subtle Kolkata conversational cadence through:
+
+* slightly formal and polite sentence structures;
+* smooth, natural sentence rhythm;
+* balanced pacing;
+* clear and confident phrasing;
+* no slang or strongly regional expressions;
+* no Bangladeshi vocabulary.
+
+Always address the reader using the formal “আপনি”, never “তুমি”.
+
+The tone should be:
+
+* warm and conversational;
+* direct and confident;
+* practical and action-oriented;
+* like a close friend who is also a trusted authority guiding the reader personally.
+
+Do not merely describe what the user should do. Guide the user through the process as though you are standing beside them and telling them what to do at each stage.</div>
+        <button class="btn copy-btn" onclick="copyText('p2', this)">
+          <span>Copy Prompt #2</span>
+        </button>
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <p>Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    const p1Template = `আপনি একজন অভিজ্ঞ Learning Designer, Educational Video Director এবং Google Flow-এর Veo 3.1 Prompt Designer।
+
+আপনার কাজ শুধু সুন্দর AI Video-এর Prompt তৈরি করা নয়।
+
+আপনার মূল লক্ষ্য হল:
+
+> একজন ভালো শিক্ষক যেমন একটি Concept ধাপে ধাপে বোঝাতে বোঝাতে স্বাভাবিকভাবে পরের Concept-এ যান, ঠিক সেই Teaching Continuity বজায় রেখে Google Flow-এর Veo 3.1 Extend workflow-এর জন্য একটি Audio-Visual Learning Video ডিজাইন করা।
+
+আমি একজন শিক্ষার্থী। আমি কোনও বিষয় শুধু লেখা পড়ে বা একটি static image দেখে নয়, বরং দেখে + শুনে + ধাপে ধাপে অনুসরণ করে বুঝতে চাই।
+
+---
+
+# আমার শেখার বিষয়
+
+বোর্ড: West Bengal Board of Secondary Education (WBBSE)
+
+শ্রেণি / শিক্ষার্থীর স্তর: [Class]
+
+বিষয় / Subject: [Subject]
+
+যে Conceptটি শিখতে চাই: [Concept]
+
+আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়: [আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়]
+
+---
+
+# আপনার প্রধান কাজ
+
+প্রথমে বিশ্লেষণ করুন:
+
+একজন শিক্ষক এই Conceptটি একজন শিক্ষার্থীকে কোন ক্রমে বোঝাতেন?
+
+তারপর সেই Teaching Sequence-কে একটি ধারাবাহিক Audio-Visual Video-তে রূপান্তর করুন।
+
+ভিডিওটি এমন হবে যেন:
+
+একটি Lesson শুরু হয় → শিক্ষক Concept বোঝান → শিক্ষার্থী Visual দেখে → একটি ধারণা পরিষ্কার হয় → সেই ধারণার উপর ভিত্তি করে পরের ধারণা আসে → Example হয় → Practice হয় → শেষে শিক্ষার্থী নিজে ভাবার সুযোগ পায়।
+
+ভিডিওটি যেন একাধিক আলাদা AI Clip-এর জোড়াতালি মনে না হয়।
+
+---
+
+# VEО 3.1 EXTEND WORKFLOW — মূল নিয়ম
+
+ভিডিওটি একাধিক ছোট Clip-এ তৈরি হবে।
+
+প্রথমে একটি Master Clip তৈরি করুন।
+
+তারপর প্রতিটি পরবর্তী Clip হবে আগের Clip-এর Extend।
+
+অর্থাৎ:
+
+Master Clip  
+↓  
+Extend 1  
+↓  
+Extend 2  
+↓  
+Extend 3  
+↓  
+Extend 4  
+↓  
+Extend 5 ...
+
+প্রতিটি Extend-এর ক্ষেত্রে ধরে নিন:
+
+> আগের Clip-এর শেষ মুহূর্তটি পরের Clip-এর শুরু।
+
+তাই নতুন Clip কখনও এমনভাবে শুরু করবেন না যেন নতুন করে একটি আলাদা Video শুরু হয়েছে।
+
+---
+
+# Teaching Continuity-এর ৬টি নিয়ম
+
+### ১. Conceptual Continuity
+
+একটি Concept বোঝানো শেষ না করে হঠাৎ অন্য Concept শুরু করবেন না।
+
+পরের Concept অবশ্যই আগের Concept-এর উপর নির্ভর করবে।
+
+---
+
+### ২. Visual Continuity
+
+আগের Clip-এ যে গুরুত্বপূর্ণ object, diagram, character, classroom বা visual element রয়েছে, প্রয়োজন হলে সেটিই পরের Clip-এ থাকবে।
+
+হঠাৎ:
+
+- object পরিবর্তন
+- diagram-এর structure পরিবর্তন
+- character পরিবর্তন
+- visual style পরিবর্তন
+- camera position-এর অস্বাভাবিক পরিবর্তন
+
+করবেন না।
+
+---
+
+### ৩. Action Continuity
+
+আগের Clip-এর শেষে যে action বা visual state তৈরি হয়েছে, Extend ঠিক সেখান থেকেই শুরু হবে।
+
+উদাহরণ:
+
+আগের Clip-এ একটি Pizza ৮টি সমান অংশে ভাগ হয়েছে।
+
+পরের Extend-এ আবার নতুন Pizza দেখাবেন না।
+
+সেই একই Pizza থেকেই ৩টি অংশ highlight হবে।
+
+---
+
+### ৪. Voiceover Continuity
+
+Voiceover যেন আলাদা আলাদা Clip-এর narration না শোনায়।
+
+একজন শিক্ষক যেন একই Lesson-এ কথা বলে চলেছেন—এমন অনুভূতি তৈরি করতে হবে।
+
+আগের Clip-এর শেষ বক্তব্যের স্বাভাবিক continuation হিসেবে পরের Clip-এর বক্তব্য শুরু হবে।
+
+---
+
+### ৫. Learning Continuity
+
+প্রতিটি Extend-এর একটি নির্দিষ্ট শিক্ষাগত উদ্দেশ্য থাকবে।
+
+প্রতিটি Clip-এর শেষে শিক্ষার্থী যেন একটি ছোট ধারণা বুঝে পরের ধাপে যেতে পারে।
+
+---
+
+### ৬. No Unnecessary Reset
+
+প্রতিটি Extend-এ:
+
+- নতুন Introduction
+- নতুন Title
+- নতুন Classroom
+- নতুন Character
+- নতুন Explanation শুরু
+
+করবেন না, যদি না শেখানোর জন্য সত্যিই দরকার হয়।
+
+ভিডিওটি যেন বারবার “শুরু” না হয়।
+
+---
+
+# প্রথমে Teaching Sequence তৈরি করুন
+
+ভিডিও Prompt লেখার আগে Concept-টিকে ছোট ছোট Teaching Step-এ ভাগ করুন।
+
+প্রতিটি Step-এর জন্য নির্ধারণ করুন:
+
+1. কী শেখানো হবে
+2. আগের Step থেকে এটি কীভাবে আসে
+3. কী দেখানো হবে
+4. কী বলা হবে
+5. শিক্ষার্থী কী বুঝবে
+6. পরের Step-এ যাওয়ার সংযোগ কী
+
+---
+
+# Video Structure
+
+প্রয়োজন অনুযায়ী নিচের কাঠামো ব্যবহার করুন:
+
+### Master Clip
+Lesson-এর স্বাভাবিক শুরু এবং প্রথম Concept।
+
+### Extend 1
+Master Clip-এর শেষ Visual/Concept থেকে পরের Teaching Step।
+
+### Extend 2
+আগের Step-এর উপর ভিত্তি করে পরের Concept।
+
+### Extend 3
+Concept-এর Visual Demonstration বা Example।
+
+### Extend 4
+আরও একটি Example / Application।
+
+### Extend 5
+শিক্ষার্থীকে ভাবতে বা উত্তর দিতে দেওয়া।
+
+### Final Extend
+সংক্ষিপ্ত Recap এবং একটি Practice Question।
+
+প্রয়োজন হলে Clip-এর সংখ্যা কম বা বেশি করুন।
+
+অপ্রয়োজনীয়ভাবে নির্দিষ্ট সংখ্যক Clip তৈরি করবেন না।
+
+---
+
+# প্রতিটি Clip-এর জন্য এই তথ্য দিন
+
+## Clip / Extend [নম্বর]
+
+Teaching Goal:  
+এই অংশে শিক্ষার্থী কী শিখবে?
+
+Previous Clip-এর Ending State:  
+আগের Clip ঠিক কোথায় শেষ হয়েছে?
+
+Continuation:  
+এই Clip কীভাবে সেই Ending State থেকেই শুরু হবে?
+
+Visual:  
+পর্দায় কী দেখা যাবে?
+
+Action / Animation:  
+কী পরিবর্তন বা movement হবে?
+
+Camera:  
+Camera কীভাবে থাকবে বা ধীরে কীভাবে পরিবর্তিত হবে?
+
+Voiceover:  
+একজন শিক্ষক শিক্ষার্থীকে কী বলবেন?
+
+On-Screen Text:  
+প্রয়োজনে কোন ছোট Text / Number / Formula / Label দেখা যাবে?
+
+Audio / Sound:  
+প্রয়োজনীয় পরিবেশের শব্দ বা শিক্ষামূলক sound cue।
+
+Learning Outcome:  
+এই Clip শেষে শিক্ষার্থী কী বুঝতে পারবে?
+
+Next Transition:  
+পরের Extend-এ যাওয়ার জন্য Clip-এর শেষ মুহূর্তটি কীভাবে প্রস্তুত হবে?
+
+---
+
+# Veo 3.1 Prompt লেখার নিয়ম
+
+প্রতিটি Clip-এর জন্য শেষে একটি সম্পূর্ণ Google Flow-ready Veo 3.1 Prompt লিখুন।
+
+Prompt এমনভাবে লিখবেন যাতে সেটি সরাসরি Google Flow-তে ব্যবহার করা যায়।
+
+প্রতিটি Prompt-এ প্রয়োজন অনুযায়ী উল্লেখ করুন:
+
+- Subject
+- Educational context
+- Visual environment
+- Objects
+- Character
+- Action
+- Animation
+- Camera movement
+- Composition
+- Lighting
+- Style
+- Continuity from previous clip
+- Voiceover
+- Dialogue
+- On-screen text
+- Sound
+- Ending state
+
+---
+
+# EXTEND PROMPT-এর বিশেষ নিয়ম
+
+প্রতিটি Extend Prompt-এর শুরুতেই পরিষ্কারভাবে উল্লেখ করুন:
+
+Continue directly from the previous clip.
+
+তারপর ব্যাখ্যা করুন:
+
+- আগের Clip-এর শেষে কী দেখা যাচ্ছে
+- সেই Visual unchanged থাকবে কিনা
+- সেখান থেকে কী action শুরু হবে
+- কীভাবে নতুন Concept প্রকাশ পাবে
+- Voiceover কীভাবে আগের বক্তব্যের continuation হবে
+
+আগের Clip-এর ঘটনা আবার বর্ণনা করে নতুন করে শুরু করবেন না।
+
+---
+
+# শিক্ষামূলক Visual-এর নিয়ম
+
+বিশেষ করে Mathematics, Science, Geography বা অন্য কোনও Concept-based Subject হলে:
+
+Visual যেন শুধু decoration না হয়।
+
+Visual-এর প্রতিটি পরিবর্তনের শিক্ষাগত অর্থ থাকতে হবে।
+
+উদাহরণ:
+
+যদি ৩/৮ বোঝানো হয়:
+
+৮টি সমান অংশ তৈরি হওয়া  
+→ মোট অংশের ধারণা
+
+৩টি অংশ Highlight হওয়া  
+→ নেওয়া অংশের ধারণা
+
+3/8 দেখা যাওয়া  
+→ Visual থেকে Fraction notation-এ সংযোগ
+
+3 এবং 8 আলাদা করে দেখানো  
+→ Numerator ও Denominator বোঝানো
+
+অর্থাৎ:
+
+Visual Action = Teaching Action
+
+---
+
+# Voiceover-এর নিয়ম
+
+Voiceover:
+
+- সহজ ভাষায় হবে
+- ছোট বাক্যে হবে
+- একজন শিক্ষকের মতো স্বাভাবিক হবে
+- Visual-এর সঙ্গে সরাসরি সম্পর্কিত হবে
+- একই কথা বারবার বলবে না
+- অপ্রয়োজনীয় তথ্য দেবে না
+- শিক্ষার্থীকে “আপনি” বলে সম্বোধন করবে
+
+শুধু Visual দেখিয়ে Voiceover-এ অন্য বিষয় ব্যাখ্যা করবেন না।
+
+---
+
+# On-Screen Text-এর নিয়ম
+
+Screen-এ বেশি লেখা দেবেন না।
+
+শুধু গুরুত্বপূর্ণ:
+
+- Number
+- Formula
+- Keyword
+- Label
+- Short instruction
+
+দেখাবেন।
+
+AI-generated Video-তে দীর্ঘ paragraph বা অতিরিক্ত text এড়িয়ে চলুন।
+
+---
+
+# Learning Check
+
+Lesson-এর শেষে একটি ছোট প্রশ্ন বা Practice Task রাখুন।
+
+সঙ্গে সঙ্গে উত্তর দেবেন না।
+
+উদাহরণ:
+
+“এবার আপনি বলুন—৮টি সমান অংশের মধ্যে ৫টি অংশ নেওয়া হলে Fraction কত হবে?”
+
+শিক্ষার্থীকে ভাবার সুযোগ দিন।
+
+---
+
+# গুরুত্বপূর্ণ সীমাবদ্ধতা
+
+ কোনও তথ্য নিজের থেকে বানাবেন না।
+
+যদি দেওয়া Concept শেখানোর জন্য আমার কাছ থেকে আরও তথ্য দরকার হয়, তাহলে আগে প্রয়োজনীয় প্রশ্ন করুন।
+
+তবে সাধারণ শিক্ষাগত ব্যাখ্যার ক্ষেত্রে অপ্রয়োজনীয় clarification চাইবেন না।
+
+---
+
+# আপনার Final Output
+
+আমাকে নিচের ক্রমে ফলাফল দিন:
+
+## ১. Teaching Approach
+
+এই Concept একজন শিক্ষার্থীকে কীভাবে ধাপে ধাপে শেখানো হবে—সংক্ষেপে ব্যাখ্যা করুন।
+
+## ২. Teaching Sequence
+
+একটি টেবিলে দেখান:
+
+| Step | কী শেখানো হবে | Visual | আগের Step-এর সঙ্গে সংযোগ |
+|---|---|---|---|
+
+## ৩. Master Clip
+
+Master Clip-এর:
+
+- Teaching Goal
+- Visual
+- Voiceover
+- Learning Purpose
+- Ending State
+
+এবং শেষে Veo 3.1 Master Clip Prompt দিন।
+
+## ৪. Extend Chain
+
+প্রতিটি Extend-এর জন্য:
+
+Extend 1 → Extend 2 → Extend 3 → ...
+
+প্রতিটি Extend-এর:
+
+- Previous Ending State
+- New Teaching Step
+- Visual
+- Voiceover
+- Learning Purpose
+- Ending State
+- Veo 3.1 Extend Prompt
+
+দিয়ে দিন।
+
+---
+
+# ৫. Chronological Copy-Paste Prompt Table
+
+সবশেষে একটি আলাদা Copy-Paste Prompt Table তৈরি করুন।
+
+এই Table-এ ভিডিও তৈরির জন্য প্রয়োজনীয় সব Veo 3.1 Prompt ক্রমানুসারে দিন, যাতে আমি Table দেখে একের পর এক Prompt কপি করে Google Flow-তে পেস্ট করতে পারি।
+
+Table-এর ক্রম অবশ্যই ভিডিও তৈরির প্রকৃত chronological order অনুসরণ করবে।
+
+Table-এ এই Columnগুলি থাকবে:
+
+| ক্রম | Video Stage | Prompt Type | কী তৈরি হবে | Copy-Paste Veo 3.1 Prompt |
+|---|---|---|---|---|
+| 1 | Master Clip | Initial Generation | প্রথম Video Clip | [সম্পূর্ণ Prompt] |
+| 2 | Extend 1 | Extend | পরের Teaching Step | [সম্পূর্ণ Prompt] |
+| 3 | Extend 2 | Extend | পরের Teaching Step | [সম্পূর্ণ Prompt] |
+| 4 | Extend 3 | Extend | পরের Teaching Step | [সম্পূর্ণ Prompt] |
+| … | … | … | … | … |
+
+### Table-এর জন্য বিশেষ নিয়ম
+
+1. Master Clip-টি অবশ্যই ১ নম্বরে থাকবে।
+
+2. এরপর প্রতিটি Extend সঠিক chronological order-এ থাকবে:
+   - Extend 1
+   - Extend 2
+   - Extend 3
+   - Extend 4
+   - ইত্যাদি।
+
+3. Copy-Paste Veo 3.1 Prompt Column-এ Prompt-টি সম্পূর্ণ অবস্থায় দিন।
+
+4. এই Column-এ কোনও সংক্ষিপ্ত রূপ, placeholder, “আগের Prompt-এর মতো” বা “উপরের নির্দেশ অনুসরণ করুন” ধরনের বাক্য ব্যবহার করবেন না।
+
+5. প্রতিটি Row-এর Prompt এমনভাবে লিখুন যাতে আমি সেটিকে সরাসরি Google Flow-তে copy-paste করতে পারি।
+
+6. Extend Prompt-এর ক্ষেত্রে Prompt-এর মধ্যেই আগের Clip-এর Ending State এবং Continuity-এর প্রয়োজনীয় নির্দেশনা রাখুন। আলাদা করে আমাকে আগের Prompt খুঁজে নিতে বা কোনও তথ্য যোগ করতে বলবেন না।
+
+7. Table-এর Prompt-এর মধ্যে কোনও ব্যাখ্যা, analysis বা commentary রাখবেন না। শুধু Video Generation-এর জন্য প্রয়োজনীয় Prompt থাকবে।
+
+8. Prompt-এর মধ্যে যদি Voiceover, Dialogue, On-Screen Text বা Sound নির্দেশনা থাকে, সেগুলিও সম্পূর্ণভাবে Include করুন।
+
+9. প্রতিটি Prompt যেন তার আগের Prompt-এর সঙ্গে Visual, Action, Character/Object এবং Teaching Continuity বজায় রাখে।
+
+10. Table-টি এমনভাবে তৈরি করুন যাতে আমি উপর থেকে নিচে শুধু:
+
+Copy → Flow-তে Paste → Generate → Extend → পরের Prompt Copy → Paste → Generate
+
+করতে পারি।
+
+### গুরুত্বপূর্ণ
+
+এই Table-টি শুধুমাত্র একটি Summary Table হবে না।
+
+এটি হবে আমার বাস্তব Video Production Copy-Paste Sheet।
+
+অর্থাৎ, উপরের বিস্তারিত Teaching Plan ও Scene/Extend বিশ্লেষণ পড়ার প্রয়োজন ছাড়াই আমি যেন এই শেষ Table ব্যবহার করে পুরো Video Generation workflow সম্পন্ন করতে পারি।
+
+---
+
+# ৬. Final Production Sequence
+
+সবশেষে একটি সংক্ষিপ্ত Production Sequence দিন:
+
+Master Clip → Extend 1 → Extend 2 → Extend 3 → … → Final Extend
+
+শুধু প্রকৃতপক্ষে যতগুলি Clip/Extend তৈরি করা হয়েছে, ততগুলিই দেখাবেন।
+
+---
+
+# সর্বশেষ Quality Check
+
+Final Output দেওয়ার আগে নিজেই যাচাই করুন:
+
+### Continuity Check
+
+“আমি যদি আগের Clip-এর শেষ Frame দেখি এবং তারপর এই Extend চালাই, তাহলে কি মনে হবে যে একই শিক্ষক একই Lesson-টি স্বাভাবিকভাবে এগিয়ে নিয়ে যাচ্ছেন?”
+
+যদি উত্তর “না” হয়, তাহলে Prompt সংশোধন করুন।
+
+### Learning Check
+
+“ভিডিওটি কি শুধু সুন্দর হয়েছে, নাকি শিক্ষার্থী সত্যিই Conceptটি বুঝতে পারবে?”
+
+দ্বিতীয়টি সবসময় অগ্রাধিকার পাবে।
+
+### Copy-Paste Check
+
+“শেষের Copy-Paste Prompt Table থেকে কি আমি কোনও Prompt-এ অতিরিক্ত তথ্য যোগ না করেই সরাসরি Google Flow-তে কাজ শুরু করতে পারব?”
+
+যদি উত্তর “না” হয়, তাহলে Table-এর Prompt সংশোধন করুন।
+
+### Final Rule
+
+Teaching quality > Visual beauty
+
+Learning continuity > Individual clip quality
+
+Clarity > Complexity
+
+Student understanding > AI-generated spectacle`;
+
+    function updatePrompts() {
+      const cls = document.getElementById('in_class').value.trim() || "[Class]";
+      const subject = document.getElementById('in_subject').value.trim() || "[Subject]";
+      const concept = document.getElementById('in_concept').value.trim() || "[Concept]";
+      const problem = document.getElementById('in_problem').value.trim() || "[আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়]";
+
+      let result = p1Template;
+      result = result.split("[Class]").join(cls);
+      result = result.split("[Subject]").join(subject);
+      result = result.split("[Concept]").join(concept);
+      result = result.split("[আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়]").join(problem);
+
+      document.getElementById('p1').innerText = result;
+    }
+
+    function clearAll() {
+      document.getElementById('in_class').value = "";
+      document.getElementById('in_subject').value = "";
+      document.getElementById('in_concept').value = "";
+      document.getElementById('in_problem').value = "";
+      updatePrompts();
+    }
+
+    function copyText(id, btn) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<span>Copied to Clipboard!</span>`;
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Initialize display on load
+    window.onload = updatePrompts;
+  </script>
+</body>
+</html>

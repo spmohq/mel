@@ -1,0 +1,86 @@
+
+
+
+Prompt#1:
+
+What is the core message of this content?
+
+Prompt#2:
+
+এই কনটেন্টের core message-কে প্রেজেন্টেশন পয়েন্টে সাজিয়ে দিন।
+
+Prompt#3:
+
+এই core message-এর জন্য ৮টি স্লাইডের একটি পূর্ণাঙ্গ বাংলা presentation outline তৈরি করুন, যেখানে প্রতিটি স্লাইডে title, ৩টি মূল bullet এবং speaker note থাকবে।
+
+Prompt#4:
+
+এই ৮টি স্লাইডের প্রতিটির জন্য উপযুক্ত ভিজ্যুয়াল, আইকন, ডায়াগ্রাম বা ছবি ব্যবহারের পরামর্শ দিন।
+
+Prompt#5:
+
+এই ৮টি স্লাইডের জন্য ৫ থেকে ৭ মিনিটের একটি স্বাভাবিক বাংলা উপস্থাপনা স্ক্রিপ্ট লিখুন।
+
+Prompt#6:
+
+এই স্বাভাবিক বাংলা উপস্থাপনা স্ক্রিপ্টটিকে আরও **কথোপকথনধর্মী, TED Talk-এর মতো ৫–৭ মিনিটের delivery script** হিসেবেও রূপ দাও পারি—যেখানে কোথায় pause, কোথায় emphasis এবং কোন slide-এ শ্রোতার দিকে তাকিয়ে কথা বলবেন, সেটাও থাকবে।  
+
+Prompt#7:
+
+এই teaching-video voice-over script-টিকে TTS-এর জন্য optimise করুন।
+
+লক্ষ্য: AI voice যেন একজন ভালো শিক্ষকের মতো পরিষ্কার, স্বাভাবিক ও সহজবোধ্যভাবে script-টি deliver করে। প্রয়োজনমতো punctuation, sentence break, paragraph break এবং pause-এর জায়গা ঠিক করুন।
+
+কিন্তু script-এর তথ্য, যুক্তি, ক্রম, বক্তব্য বা pedagogical intent পরিবর্তন করবেন না। নতুন কিছু যোগ বা বাদ দেবেন না।
+
+Output: শুধু TTS-optimised voice-over script দিন।
+
+
+Prompt#8:
+
+For each of those slides, create a complete, ready-to-use image-generation prompt that can be used directly with ChatGPT’s image-generation capability. Tailor each prompt specifically to the content, message, and visual requirements of the corresponding slide, while also aligning it with the voice-over presentation script you provided in your previous answer.
+
+Prompt#9:
+
+এই ৮টি স্লাইডের জন্য একটি একক ভিজ্যুয়াল স্টাইল গাইড তৈরি করো—রঙের প্যালেট, টাইপোগ্রাফি, আলো, কম্পোজিশন, চরিত্রের ধারাবাহিকতা এবং প্রতিটি ছবিতে কীভাবে একই visual language বজায় থাকবে তা নির্দিষ্ট করে দাও।
+
+Prompt#10
+
+Will these slide-prompts generate slides in Bengali (India)?
+
+Prompt#11:
+
+Rewrite the eight prompts as complete 16:9 slide-generation prompts with all visible slide text in natural Bengali (India), while preserving the visual system, layout, character consistency, and colour palette.
+
+Prompt#12:
+
+৮-slide TED Talk script-টিকে Clipchamp-এর জন্য Part 1 + Part 2, দুটোই ৬১০০ character-এর নিচে রেখে, সরাসরি copy-paste করার মতো final voice-over script হিসেবে তৈরি করে দাও 
+
+Prompt#13:
+
+Please review the uploaded wav files. Based on those files now create a timestamped script  of the TED Talk script you provided in your previous reply
+
+Prompt#14:
+
+আপলোড করা voice-over sound files এবং slide images দেখে image files-এর নতুন নাম তৈরি করুন।
+
+প্রতিটি voice file-এর actual duration থেকে slide-এর start timestamp বের করুন। তারপর সেই timestamp অনুযায়ী সংশ্লিষ্ট slide image-এর নতুন filename দিন।
+
+Filename format:
+M-SS.png
+
+যেমন:
+00:00 → 0-00.png
+00:31 → 0-31.png
+01:20 → 1-20.png
+
+Output হিসেবে একটি table দিন:
+
+Slide ID | Current Image Filename | Start Timestamp | New Image Filename
+
+কোনও image বা voice file-এর ক্ষেত্রে তথ্য নিশ্চিত না হলে অনুমান করবেন না; সেটি উল্লেখ করুন।
+
+
+
+
+
