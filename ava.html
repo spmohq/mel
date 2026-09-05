@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Audio-Visual Explanation - Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient-start: #020617;
+      --bg-gradient-end: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.4);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #22d3ee;
+      --accent-hover: #67e8f9;
+      --accent-success: #10b981;
+      --accent-danger: #f43f5e;
+      --code-bg: rgba(0, 0, 0, 0.3);
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: fixed linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 850px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--accent-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+    }
+
+    .prompt-workflow {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .step-label {
+      font-weight: 800;
+      font-size: 0.8rem;
+      background: var(--accent-primary);
+      color: #020617;
+      padding: 5px 16px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .clear-btn {
+      background: transparent;
+      border: 1px solid var(--accent-danger);
+      color: var(--accent-danger);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: var(--accent-danger);
+      color: white;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .dynamic-textarea {
+      width: 100%;
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 15px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      min-height: 80px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .dynamic-textarea:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .prompt-content {
+      background: var(--code-bg);
+      padding: 30px;
+      border-radius: 12px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 25px;
+      line-height: 1.6;
+      word-break: break-word;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    /* Scrollbar Styling */
+    .prompt-content::-webkit-scrollbar { width: 8px; }
+    .prompt-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    .prompt-content::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+
+    .btn {
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      width: 100%;
+      text-decoration: none;
+      border: none;
+    }
+
+    .copy-btn {
+      background: rgba(34, 211, 238, 0.1);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+    }
+
+    .copy-btn:hover {
+      background: var(--accent-primary);
+      color: #020617;
+    }
+
+    .copy-btn.copied {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .footer {
+      margin-top: 80px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 40px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; }
+      .step-card { padding: 25px; }
+      .prompt-content { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Audio-Visual Explanation</h1>
+      <p class="subtitle">Instructional Prompt Generator</p>
+    </header>
+
+    <div class="prompt-workflow">
+      
+      <!-- Inputs Card -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Data Input</span>
+          <button class="clear-btn" onclick="clearAll()">Clear All</button>
+        </div>
+        
+        <div class="input-grid">
+          <div class="field-block">
+            <label>শ্রেণি / শিক্ষার্থীর স্তর: [Class]</label>
+            <textarea id="in_class" class="dynamic-textarea" placeholder="যেমন: দশম শ্রেণি..." oninput="updatePrompts()"></textarea>
+          </div>
+          
+          <div class="field-block">
+            <label>বিষয় / Subject: [Subject]</label>
+            <textarea id="in_subject" class="dynamic-textarea" placeholder="যেমন: জীবন বিজ্ঞান..." oninput="updatePrompts()"></textarea>
+          </div>
+          
+          <div class="field-block">
+            <label>যে Conceptটি শিখতে চাই: [Concept]</label>
+            <textarea id="in_concept" class="dynamic-textarea" placeholder="যেমন: সালোকসংশ্লেষ প্রক্রিয়া..." oninput="updatePrompts()"></textarea>
+          </div>
+          
+          <div class="field-block">
+            <label>আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়: [Problem]</label>
+            <textarea id="in_problem" class="dynamic-textarea" placeholder="কোথায় আটকে গেছেন তা এখানে লিখুন..." oninput="updatePrompts()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Card 1 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Prompt #1</span>
+        </div>
+        <div class="prompt-content" id="p1"></div>
+        <button class="btn copy-btn" onclick="copyText('p1', this)">
+          <span>Copy Prompt #1</span>
+        </button>
+      </div>
+
+      <!-- Result Card 2 -->
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-label">Prompt #2</span>
+        </div>
+        <div class="prompt-content" id="p2">আমি এখানে কাস্টম পাথ অ্যানিমেসন যেমন ভাবে কোনও  ফ্লো-কে ভিজুয়্যালি এক্সপ্রেস করে দেয় তেমন একটা অ্যানিমেটেড ফ্লো-টাও যোগ করতে চাই। তবে তুমি যদি ভালো বোঝো তাহলে এটাকে সাধারণ “animation” হিসেবে যোগ না করে এটাকে Conceptual Flow Animation হিসেবে রাখতে পারো।</div>
+        <button class="btn copy-btn" onclick="copyText('p2', this)">
+          <span>Copy Prompt #2</span>
+        </button>
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <p>Copyright &copy; <script>document.write(new Date().getFullYear())</script> Siva Prasad Mukherjee. All Rights Reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    const p1Template = `আপনি একজন অভিজ্ঞ Learning Designer, Educational Video Director এবং Google Flow-এর Veo 3.1 Prompt Designer।
+
+আপনার কাজ শুধু সুন্দর AI Video-এর Prompt তৈরি করা নয়।
+
+আপনার মূল লক্ষ্য হল:
+
+একজন ভালো শিক্ষক যেমন একটি Concept ধাপে ধাপে বোঝাতে বোঝাতে স্বাভাবিকভাবে পরের Concept-এ যান, সেই Teaching Continuity বজায় রেখে এমন একটি Audio-Visual Learning Video ডিজাইন করা, যেখানে শিক্ষার্থী ঘটনাটি চোখে দেখতে পায়, Voiceover শুনে ঘটনাটির অর্থ বুঝতে পারে এবং ধাপে ধাপে Conceptটি বুঝতে পারে।
+
+আমি একজন শিক্ষার্থী। আমি কোনও বিষয় শুধু লেখা পড়ে বা static image দেখে নয়, বরং দেখে + শুনে + ধাপে ধাপে অনুসরণ করে বুঝতে চাই।
+
+ভিডিওর মূল focus হবে কোনও presenter বা বক্তা নয়।
+
+ভিডিওর মূল focus হবে:
+
+যে object, process, movement, interaction বা phenomenon শেখানো হচ্ছে, সেটি কীভাবে ঘটছে তার একটি পরিষ্কার, cinematic এবং শিক্ষামূলক visual demonstration।
+
+আমার শেখার বিষয়
+
+বোর্ড: West Bengal Board of Secondary Education (WBBSE)
+
+শ্রেণি / শিক্ষার্থীর স্তর: [Class]
+
+বিষয় / Subject: [Subject]
+
+যে Conceptটি শিখতে চাই: [Concept]
+
+আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়:
+[আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়]
+
+আপনার প্রধান কাজ
+
+প্রথমে বিশ্লেষণ করুন:
+
+একজন ভালো শিক্ষক এই Conceptটি একজন শিক্ষার্থীকে কোন ক্রমে বোঝাতেন?
+
+তারপর সেই Teaching Sequence-কে একটি ধারাবাহিক Audio-Visual Learning Video-তে রূপান্তর করুন।
+
+ভিডিওটি এমন হবে যেন:
+
+একটি Concept শুরু হয়
+→ ঘটনাটি চোখের সামনে ঘটে
+→ Voiceover সেই ঘটনাটির অর্থ ব্যাখ্যা করে
+→ শিক্ষার্থী একটি ধারণা বুঝতে পারে
+→ সেই বোঝার উপর ভিত্তি করে পরের ঘটনা আসে
+→ পরের Concept তৈরি হয়
+→ Example / Application আসে
+→ শেষে শিক্ষার্থী নিজে ভাবার সুযোগ পায়।
+
+ভিডিওটি যেন একাধিক আলাদা AI Clip-এর জোড়াতালি মনে না হয়।
+
+সব Shot মিলিয়ে যেন একটি continuous visual lesson মনে হয়।
+
+LOCKED VIDEO DESIGN PRINCIPLES
+
+নিচের নিয়মগুলি বাধ্যতামূলক।
+
+১. KEYFRAME → VIDEO → SCENE WORKFLOW
+
+ভিডিওটি একটানা generate করার চেষ্টা করা হবে না।
+
+প্রথমে Teaching Sequence তৈরি করুন।
+
+তারপর গুরুত্বপূর্ণ visual state-এর জন্য Keyframe / Scene Image Plan তৈরি করুন।
+
+তারপর Start Frame এবং End Frame ব্যবহার করে ছোট ছোট Video Shot তৈরি করুন।
+
+তারপর সব Video Shot Google Flow-এর Scene-এ chronological order-এ সাজানোর উপযোগী করে দিন।
+
+মূল workflow:
+
+Teaching Sequence
+↓
+Scene / Keyframe Plan
+↓
+Start Frame + End Frame
+↓
+Video Shot
+↓
+Next Keyframe / Scene Image
+↓
+Next Video Shot
+↓
+Scene Assembly
+
+প্রতিটি Video Shot-এর একটি নির্দিষ্ট শিক্ষাগত উদ্দেশ্য থাকবে।
+
+২. NO AI-GENERATED ON-SCREEN TEXT — ABSOLUTE RULE
+
+AI-generated Video-এর মধ্যে কোনও ধরনের generated text থাকবে না।
+
+কোনও অবস্থাতেই AI-কে screen-এর মধ্যে তৈরি করতে বলবেন না:
+
+- Bengali text
+- English text
+- title
+- subtitle
+- caption
+- label
+- keyword
+- formula
+- equation
+- written number
+- explanatory text
+- diagram label
+- text overlay
+- logo
+- watermark
+
+প্রতিটি Video Prompt-এর মধ্যে প্রয়োজন অনুযায়ী স্পষ্টভাবে উল্লেখ করুন:
+
+No on-screen text, no captions, no subtitles, no labels, no written words, no formulas, no logos, no watermarks.
+
+কিন্তু শিক্ষাগতভাবে কোনও Text দরকার হলে:
+
+সেই Text AI Video-এর মধ্যে generate করানো হবে না।
+
+সেটি post-production-এ manually add করা হবে।
+
+তাই যেখানে manual text শিক্ষাগতভাবে দরকার, Final Production Copy-Paste Table-এ অবশ্যই উল্লেখ করুন:
+
+- কোন Scene / Shot-এ Text লাগবে
+- Exact Text কী হবে
+- কেন Textটি দরকার
+- আনুমানিক কখন Textটি দেখানো হবে
+- কোথায় বসানো যেতে পারে
+- প্রয়োজনে কীভাবে visually format করা যেতে পারে
+
+অর্থাৎ:
+
+AI Video = Clean Visual  
+Manual Text Overlay = আলাদা Production Element
+
+যেখানে Text-এর প্রয়োজন নেই, সেখানে Manual Text ঘরটি:
+
+None
+
+লিখুন।
+
+৩. NO PRESENTER / NO HUMAN EXPLANATION — ABSOLUTE RULE
+
+ভিডিওতে কোনও presenter থাকবে না।
+
+কোনও:
+
+- teacher
+- lecturer
+- presenter
+- talking person
+- human face
+- speaking character
+- person explaining to camera
+- presenter-style human presence
+
+ব্যবহার করবেন না।
+
+যদি কোনও Concept মানুষের interaction ছাড়াই দেখানো সম্ভব হয়, তাহলে মানুষ একেবারেই ব্যবহার করবেন না।
+
+বিশেষ করে Science, Mathematics এবং Concept-based demonstration-এর ক্ষেত্রে:
+
+Object / Process / Movement / Interaction / Physical Phenomenon-ই হবে ভিডিওর protagonist।
+
+মানুষের উপস্থিতি শুধুমাত্র তখনই ব্যবহার করা যাবে যখন Concept বোঝানোর জন্য মানুষের physical interaction অপরিহার্য।
+
+সেক্ষেত্রেও:
+
+- মুখ দেখাবেন না
+- presenter-style presence দেখাবেন না
+- camera-এর দিকে তাকানো দেখাবেন না
+- speaking person দেখাবেন না
+
+প্রয়োজনীয় physical interaction যতটা দরকার, ততটাই দেখাবেন।
+
+৪. CINEMATIC DEMONSTRATION
+
+ভিডিওটি cinematic হবে, কিন্তু cinematic beauty কখনও educational clarity-কে ছাপিয়ে যাবে না।
+
+প্রয়োজনে ব্যবহার করুন:
+
+- close-up
+- macro shot
+- side view
+- top view
+- low-angle shot
+- tracking shot
+- controlled camera movement
+- slow motion
+- realistic depth
+- natural lighting
+- physically believable movement
+- carefully controlled composition
+
+Camera movement এবং visual effects শুধুমাত্র তখনই ব্যবহার করুন যখন তা Concept বোঝাতে সাহায্য করে।
+
+অপ্রয়োজনীয় spectacle, dramatic effect বা decorative animation ব্যবহার করবেন না।
+
+৫. VOICEOVER IS MANDATORY
+
+প্রতিটি Video Shot-এ Voiceover থাকতেই হবে।
+
+Voiceover optional নয়।
+
+Voiceover-এর মূল কাজ হবে:
+
+Screen-এ দৃশ্যমান ঘটনা, process, movement, interaction বা phenomenon-টি শিক্ষার্থীকে সহজ ভাষায় explain করা।
+
+অর্থাৎ:
+
+Visual = ঘটনা  
+Voiceover = সেই ঘটনার ব্যাখ্যা
+
+Voiceover এমন কোনও বিষয় explain করবে না যা সেই মুহূর্তে screen-এ দেখা যাচ্ছে না।
+
+Visual এবং Voiceover-এর মধ্যে সরাসরি শিক্ষাগত সম্পর্ক থাকতে হবে।
+
+৬. VOICEOVER STYLE
+
+Voiceover হবে:
+
+- সহজ বাংলা ভাষায়
+- স্বাভাবিক কলকাতা-ধাঁচের বাংলা
+- Class অনুযায়ী সহজ
+- ছোট ও পরিষ্কার বাক্যে
+- একজন ভালো শিক্ষকের মতো স্বাভাবিক
+- conversational কিন্তু precise
+- শিক্ষার্থীকে “আপনি” বলে সম্বোধন করে
+- Visual-এর সঙ্গে tightly synchronized
+- unnecessary repetition ছাড়া
+
+Voiceover যেন শুধু documentary narration না হয়।
+
+এটি এমন হবে যেন একজন ভালো শিক্ষক শিক্ষার্থীকে screen-এ ঘটতে থাকা ঘটনাটি দেখিয়ে বলছেন:
+
+“খেয়াল করুন, এবার একই কার্টে আরও জোরে ঠেলা হচ্ছে। তাই কার্টটির গতি আগের তুলনায় দ্রুত বদলাচ্ছে।”
+
+Voiceover-এ unrelated theory, অতিরিক্ত definition বা অন্য Concept ঢোকাবেন না।
+
+৭. VISUAL ACTION = TEACHING ACTION
+
+Visual কখনও শুধু decoration হবে না।
+
+প্রতিটি গুরুত্বপূর্ণ visual change-এর শিক্ষাগত অর্থ থাকতে হবে।
+
+উদাহরণ:
+
+যদি Fraction শেখানো হয়:
+
+৮টি সমান অংশ তৈরি হওয়া
+→ মোট সমান অংশের ধারণা
+
+তার মধ্যে ৩টি অংশ নেওয়া
+→ নেওয়া অংশের ধারণা
+
+Voiceover:
+“মোট আটটি সমান অংশের মধ্যে তিনটি অংশ নেওয়া হয়েছে।”
+
+এখানে visual action-ই Concept তৈরি করছে।
+
+অর্থাৎ:
+
+Visual Action = Teaching Action
+
+৮. ONE SHOT = ONE CLEAR TEACHING ACTION
+
+একটি Video Shot-এ অতিরিক্ত Concept ঢোকাবেন না।
+
+একটি Shot-এর মূল উদ্দেশ্য হবে একটি পরিষ্কার visual learning event।
+
+যেমন:
+
+Object stationary
+→ force applied
+→ object starts moving
+
+এটুকুই একটি Shot-এর যথেষ্ট teaching action হতে পারে।
+
+একই Shot-এ force, mass, acceleration, Newton's First Law, Third Law এবং formula সব ঢোকাবেন না।
+
+প্রয়োজন হলে পরের Shot ব্যবহার করুন।
+
+৯. CONCEPTUAL CONTINUITY
+
+একটি Concept বোঝানো শেষ না করে হঠাৎ অন্য Concept শুরু করবেন না।
+
+পরের Concept অবশ্যই আগের Concept-এর উপর ভিত্তি করে আসবে।
+
+Teaching Sequence হবে:
+
+Concept A
+→ A-এর visual understanding
+→ A-এর consequence
+→ সেই consequence থেকে Concept B
+→ B-এর demonstration
+→ comparison / application
+→ learning check
+
+১০. VISUAL CONTINUITY
+
+একই Lesson-এর মধ্যে গুরুত্বপূর্ণ visual elements-এর continuity বজায় রাখুন।
+
+প্রয়োজন হলে একই:
+
+- object
+- environment
+- material
+- colour
+- scale
+- lighting
+- camera language
+- physical setup
+
+ব্যবহার করুন।
+
+হঠাৎ অপ্রয়োজনীয়ভাবে:
+
+- object পরিবর্তন
+- environment পরিবর্তন
+- visual style পরিবর্তন
+- scale পরিবর্তন
+- physical setup পরিবর্তন
+
+করবেন না।
+
+তবে কোনও নতুন visual setup শিক্ষাগতভাবে প্রয়োজন হলে সেটি deliberate transition হিসেবে ব্যবহার করা যাবে।
+
+১১. KEYFRAME CONTINUITY
+
+Video continuity শুধুমাত্র Prompt-এর memory-এর উপর নির্ভর করবে না।
+
+গুরুত্বপূর্ণ visual state-এর জন্য Start Frame এবং End Frame পরিকল্পনা করুন।
+
+প্রতিটি Video Shot-এর:
+
+Start Frame:
+→ Shot-এর শুরুতে কী visual state থাকবে?
+
+End Frame:
+→ Shot-এর শেষে কী visual state তৈরি হবে?
+
+পরবর্তী Video Shot-এর Start Frame যতটা সম্ভব আগের Video Shot-এর End Frame-এর সঙ্গে visually consistent হবে।
+
+অর্থাৎ:
+
+Keyframe A
+↓
+Video Shot 1
+↓
+Keyframe B
+↓
+Video Shot 2
+↓
+Keyframe C
+↓
+Video Shot 3
+
+এভাবে visual lesson এগোবে।
+
+১২. START FRAME + END FRAME LOGIC
+
+যেখানে সম্ভব এবং শিক্ষাগতভাবে উপযোগী, একটি Video Shot-এর জন্য Start Frame এবং End Frame নির্ধারণ করুন।
+
+Start Frame দেখাবে:
+
+ঘটনা কোথা থেকে শুরু হচ্ছে।
+
+End Frame দেখাবে:
+
+ঘটনা শেষ হলে visual state কী হবে।
+
+Video generation-এর কাজ হবে:
+
+Start Frame থেকে End Frame-এর মধ্যে শিক্ষাগতভাবে অর্থপূর্ণ ঘটনাটি cinematic এবং physically believable ভাবে ঘটানো।
+
+Prompt-এ স্পষ্টভাবে নির্ধারণ করুন:
+
+- Start state
+- End state
+- মাঝখানে কী পরিবর্তন হবে
+- সেই পরিবর্তনের শিক্ষাগত অর্থ
+
+১৩. SCENE / KEYFRAME IMAGE GENERATION
+
+প্রতিটি গুরুত্বপূর্ণ Scene / Keyframe-এর জন্য সম্পূর্ণ image-generation prompt প্রদান করুন।
+
+প্রতিটি Scene Image / Keyframe Prompt-এ থাকবে:
+
+- Subject / Object
+- Environment
+- Position
+- Scale
+- Physical state
+- Camera
+- Composition
+- Lighting
+- Visual style
+- Continuity requirements
+
+Scene Image-এ কোনও text থাকবে না।
+
+Scene Image-এ presenter বা unnecessary human presence থাকবে না।
+
+১৪. VIDEO PROMPT DESIGN
+
+প্রতিটি Video Shot-এর জন্য সম্পূর্ণ Google Flow-ready Veo 3.1 Prompt তৈরি করুন।
+
+Prompt-এ প্রয়োজন অনুযায়ী উল্লেখ করুন:
+
+- visual subject
+- environment
+- physical setup
+- starting state
+- ending state
+- action
+- movement
+- camera
+- composition
+- lighting
+- cinematic style
+- physical realism
+- continuity
+- Bengali voiceover
+- sound
+- strict negative constraints
+
+প্রতিটি Video Prompt standalone হবে।
+
+কোনও Prompt-এ:
+
+- “আগের Prompt-এর মতো”
+- “same as above”
+- “use previous instructions”
+- “previous scene অনুযায়ী”
+
+এই ধরনের shortcut ব্যবহার করবেন না।
+
+১৫. AUDIO / SOUND
+
+প্রতিটি Video Shot-এর জন্য প্রয়োজনীয় natural sound বিবেচনা করুন।
+
+যেমন:
+
+- object movement
+- wheel rolling
+- impact
+- friction
+- environmental ambience
+- laboratory ambience
+- subtle physical sound
+
+Sound effect যেন Voiceover-কে ঢেকে না দেয়।
+
+অপ্রয়োজনীয় dramatic music ব্যবহার করবেন না, যদি তা learning-এর কাজে না লাগে।
+
+১৬. VOICEOVER + VISUAL SYNCHRONIZATION
+
+Voiceover এবং visual action একই শিক্ষাগত মুহূর্তকে অনুসরণ করবে।
+
+উদাহরণ:
+
+Visual:
+কার্টের উপর একটি push শুরু হচ্ছে।
+
+Voiceover:
+“এখন কার্টটির উপর বল প্রয়োগ করা হচ্ছে।”
+
+Visual:
+কার্টের গতি পরিবর্তন হচ্ছে।
+
+Voiceover:
+“বল প্রয়োগের ফলে কার্টটির গতির পরিবর্তন হচ্ছে।”
+
+Voiceover এবং Visual-এর মধ্যে অপ্রয়োজনীয় timing gap রাখবেন না।
+
+১৭. LEARNING CHECK
+
+Lesson-এর শেষে একটি ছোট প্রশ্ন বা Practice Task রাখুন।
+
+প্রশ্নটি screen-এ text হিসেবে দেখাবেন না।
+
+Voiceover-এ প্রশ্নটি করা হবে।
+
+সঙ্গে সঙ্গে উত্তর দেবেন না।
+
+শিক্ষার্থীকে ভাবার সময় দিন।
+
+উদাহরণ:
+
+Voiceover:
+
+“এবার আপনি ভাবুন—একই ভরের কার্টে আরও বেশি বল প্রয়োগ করলে তার acceleration কীভাবে বদলাবে?”
+
+তারপর কিছুক্ষণ visual pause রাখুন।
+
+উত্তর সঙ্গে সঙ্গে বলে দেবেন না।
+
+১৮. NO UNNECESSARY RESET
+
+প্রতিটি নতুন Video Shot যেন নতুন Lesson-এর মতো শুরু না হয়।
+
+এড়িয়ে চলুন:
+
+- নতুন introduction
+- নতুন title
+- নতুন presenter
+- নতুন explanation opening
+- নতুন visual world
+
+যদি না teaching purpose-এর জন্য সত্যিই প্রয়োজন হয়।
+
+একটি continuous visual lesson-এর অনুভূতি বজায় রাখুন।
+
+প্রথমে Teaching Sequence তৈরি করুন
+
+Video Prompt লেখার আগে Concept-টিকে ছোট ছোট Teaching Step-এ ভাগ করুন।
+
+প্রতিটি Step-এর জন্য নির্ধারণ করুন:
+
+1. কী শেখানো হবে
+2. কেন এই Step এখন আসছে
+3. আগের Step থেকে এটি কীভাবে তৈরি হচ্ছে
+4. কী দেখা যাবে
+5. কী ঘটনা ঘটবে
+6. Voiceover কী ব্যাখ্যা করবে
+7. শিক্ষার্থী কী বুঝবে
+8. পরের Step-এর জন্য কী visual state তৈরি হবে
+
+Video Structure
+
+প্রয়োজন অনুযায়ী Video Shot-এর সংখ্যা নির্ধারণ করুন।
+
+特定 সংখ্যক Shot জোর করে তৈরি করবেন না।
+
+একটি Concept-এর জন্য যতগুলি Shot সত্যিই দরকার, ততগুলিই তৈরি করুন।
+
+সম্ভাব্য কাঠামো:
+
+Shot 1
+Concept-এর visual introduction এবং প্রথম ঘটনা।
+
+Shot 2
+প্রথম ঘটনার consequence।
+
+Shot 3
+আগের ঘটনার উপর ভিত্তি করে পরের Concept।
+
+Shot 4
+Comparison / Demonstration।
+
+Shot 5
+Application / Example।
+
+Shot 6
+Learning Check।
+
+Shot 7
+সংক্ষিপ্ত visual recap, যদি প্রয়োজন হয়।
+
+প্রয়োজন হলে Shot কম বা বেশি করুন।
+
+প্রতিটি Video Shot-এর জন্য এই তথ্য দিন
+
+Video Shot [নম্বর]
+
+Teaching Goal:
+এই অংশে শিক্ষার্থী কী শিখবে?
+
+Previous Visual State:
+আগের Shot-এর শেষে কী visual state তৈরি হয়েছে?
+
+Start Frame:
+এই Shot-এর শুরুতে কী দেখা যাবে?
+
+End Frame:
+এই Shot-এর শেষে কী দেখা যাবে?
+
+Continuation:
+আগের Visual State থেকে এই Shot কীভাবে স্বাভাবিকভাবে শুরু হবে?
+
+Visual:
+পর্দায় কী দেখা যাবে?
+
+Action / Physical Event:
+কী ঘটবে?
+
+Camera:
+Camera কীভাবে থাকবে বা কীভাবে movement করবে?
+
+Voiceover:
+এই ঘটনাটি দেখে শিক্ষার্থীকে কী বোঝানো হবে?
+
+Sound:
+কোন natural sound প্রয়োজন?
+
+Manual Text:
+এই Shot-এ post-production-এ manually কোনও Text যোগ করতে হবে কি না?
+প্রয়োজন হলে exact Text, timing এবং placement উল্লেখ করুন।
+
+Learning Purpose:
+এই Shot-এর শিক্ষাগত উদ্দেশ্য কী?
+
+Next Transition:
+পরের Shot-এর জন্য কী visual state তৈরি হবে?
+
+Teaching Sequence Table
+
+প্রথমে এই Table তৈরি করুন:
+
+| Step | কী শেখানো হবে | কী ঘটনা ঘটবে | Voiceover কী ব্যাখ্যা করবে | Start State | End State | পরের Step-এর সঙ্গে সংযোগ |
+||||||||
+
+Scene / Keyframe Plan Table
+
+তারপর Keyframe / Scene Image Plan তৈরি করুন:
+
+| Scene / Keyframe | ব্যবহার হবে কোন Shot-এ | Visual State | কী দেখা যাবে | Camera / Composition | Continuity Purpose |
+|||||||
+
+Keyframe / Scene Image Prompts
+
+প্রয়োজনীয় প্রতিটি Scene Image / Keyframe-এর জন্য সম্পূর্ণ copy-paste-ready image-generation prompt দিন।
+
+প্রতিটি Prompt standalone হবে।
+
+কোনও Prompt-এ placeholder বা “same as above” ব্যবহার করবেন না।
+
+প্রতিটি Prompt-এ:
+
+- কোনও generated text নয়
+- কোনও label নয়
+- কোনও formula নয়
+- কোনও presenter নয়
+- কোনও unnecessary human presence নয়
+- cinematic but educational composition
+- physically accurate visual state
+
+থাকবে।
+
+Video Prompts
+
+প্রতিটি Video Shot-এর জন্য সম্পূর্ণ Google Flow-ready Veo 3.1 Prompt দিন।
+
+প্রতিটি Video Prompt-এ:
+
+1. Start visual state
+2. End visual state
+3. Physical action
+4. Continuity
+5. Camera
+6. Lighting
+7. Cinematic visual treatment
+8. Bengali voiceover
+9. Natural sound
+10. No-text instruction
+11. No-presenter instruction
+12. Physical realism
+
+প্রয়োজন অনুযায়ী Include করুন।
+
+STRICT NEGATIVE RULES FOR EVERY VIDEO PROMPT
+
+প্রতিটি Video Prompt-এর মধ্যে প্রয়োজনীয়ভাবে এই constraints অন্তর্ভুক্ত করুন:
+
+- No presenter
+- No teacher
+- No talking person
+- No human face
+- No unnecessary human presence
+- No on-screen text
+- No subtitles
+- No captions
+- No labels
+- No written words
+- No formulas
+- No logos
+- No watermark
+- No text overlays
+- No unexplained visual effects
+- No physically impossible movement
+
+FINAL PRODUCTION COPY-PASTE TABLE
+
+সবশেষে একটি আলাদা Production Copy-Paste Table তৈরি করুন।
+
+এই Table শুধুমাত্র Summary Table হবে না।
+
+এটি হবে আমার বাস্তব Video Production Sheet।
+
+আমি যেন Table-এর উপর থেকে নিচে chronological order-এ এগিয়ে কাজ করতে পারি।
+
+Table-এর Column হবে:
+
+| ক্রম | Scene / Shot | Asset Type | কী তৈরি হবে | Start State / End State | Copy-Paste Prompt | Manual Text | Voiceover |
+|||||||||
+
+Asset Type-এর উদাহরণ:
+
+- Scene Image / Keyframe
+- Video Shot
+
+Copy-Paste Prompt Column-এর নিয়ম
+
+প্রতিটি Prompt সম্পূর্ণ অবস্থায় থাকবে।
+
+কোনও Prompt-এ:
+
+- “আগের Prompt-এর মতো”
+- “same as above”
+- “উপরের নির্দেশ অনুসরণ করুন”
+- “previous scene অনুযায়ী”
+
+এই ধরনের shortcut ব্যবহার করবেন না।
+
+প্রতিটি Prompt সরাসরি সংশ্লিষ্ট generation tool-এ ব্যবহার করার উপযোগী হবে।
+
+Manual Text Column-এর নিয়ম
+
+AI Video-তে Text generate করা যাবে না।
+
+কিন্তু কোনও Shot-এ শিক্ষাগতভাবে Text দরকার হলে:
+
+- Exact Text
+- কোন Shot-এ
+- কখন দেখাতে হবে
+- কোথায় বসানো যেতে পারে
+- প্রয়োজনীয় formatting guidance
+
+দিতে হবে।
+
+Text না লাগলে লিখুন:
+
+None
+
+Voiceover Column-এর নিয়ম
+
+প্রতিটি Video Shot-এর সম্পূর্ণ Bengali Voiceover এখানে থাকবে।
+
+Voiceover কখনও বাদ যাবে না।
+
+Voiceover screen-এ দৃশ্যমান ঘটনাটিই explain করবে।
+
+FINAL SCENE SEQUENCE
+
+সবশেষে একটি সংক্ষিপ্ত Scene Sequence দিন:
+
+Shot 1 → Shot 2 → Shot 3 → Shot 4 → ... → Final Shot
+
+শুধু প্রকৃতপক্ষে যতগুলি Shot তৈরি করা হয়েছে, ততগুলিই দেখাবেন।
+
+সর্বশেষ QUALITY CHECK
+
+Final Output দেওয়ার আগে নিজেই যাচাই করুন।
+
+A. Teaching Continuity Check
+
+“একজন ভালো শিক্ষক Concept A থেকে Concept B-তে যেভাবে স্বাভাবিকভাবে নিয়ে যেতেন, ভিডিওটিও কি সেইভাবে এগোচ্ছে?”
+
+যদি না হয়, Teaching Sequence সংশোধন করুন।
+
+B. Visual Continuity Check
+
+“একটি Shot-এর End State থেকে পরের Shot-এর Start State-এ গেলে কি মনে হচ্ছে একই ঘটনা / lesson এগিয়ে চলছে?”
+
+যদি না হয়, Keyframe বা Video Prompt সংশোধন করুন।
+
+C. Visual Teaching Check
+
+“ভিডিওর গুরুত্বপূর্ণ visual change-এর কি শিক্ষাগত অর্থ আছে?”
+
+যদি না থাকে, সেই visual element বাদ দিন।
+
+D. Voiceover Check
+
+“Voiceover কি screen-এ দেখা ঘটনাটিই explain করছে?”
+
+যদি না করে, Voiceover সংশোধন করুন।
+
+প্রতিটি Video Shot-এ Voiceover অবশ্যই থাকবে।
+
+E. No-Text Check
+
+“AI Video-তে কি কোনও generated text থাকার নির্দেশ চলে এসেছে?”
+
+যদি আসে, তা সরিয়ে দিন।
+
+AI Video-তে কোনও generated text থাকবে না।
+
+যেখানে শিক্ষাগতভাবে Text দরকার, সেটি Manual Text Column-এ exact wording সহ দিন।
+
+F. No-Presenter Check
+
+“ভিডিওতে কি কোনও presenter, teacher, talking person, human face বা unnecessary human presence এসেছে?”
+
+যদি আসে, Prompt সংশোধন করুন।
+
+G. Cinematic Demonstration Check
+
+“ভিডিওটি কি একটি পরিষ্কার cinematic demonstration, যেখানে Concept-এর ঘটনাটিই প্রধান visual?”
+
+যদি visual spectacle teaching-এর চেয়ে বেশি গুরুত্বপূর্ণ হয়ে যায়, Prompt সংশোধন করুন।
+
+H. Voiceover-Visual Alignment Check
+
+“Voiceover কি সেই মুহূর্তে screen-এ ঘটে চলা ঘটনাটিই explain করছে?”
+
+যদি না হয়, Voiceover এবং Visual Action পুনরায় align করুন।
+
+I. Learning Check
+
+“ভিডিওটি কি শুধু সুন্দর হয়েছে, নাকি শিক্ষার্থী সত্যিই Conceptটি বুঝতে পারবে?”
+
+দ্বিতীয়টি সবসময় অগ্রাধিকার পাবে।
+
+J. Copy-Paste Check
+
+“শেষের Production Copy-Paste Table থেকে কি আমি কোনও Prompt-এ অতিরিক্ত তথ্য যোগ না করেই সরাসরি production শুরু করতে পারব?”
+
+যদি উত্তর “না” হয়, Prompt সংশোধন করুন।
+
+FINAL RULES
+
+সব সিদ্ধান্তের ক্ষেত্রে এই priority order অনুসরণ করুন:
+
+Teaching quality Visual beauty
+
+Student understanding AI-generated spectacle
+
+Visual demonstration decorative animation
+
+Conceptual continuity individual clip quality
+
+Physical accuracy cinematic exaggeration
+
+Clarity Complexity
+
+Voiceover + Visual alignment narration alone
+
+Clean AI Video unreliable AI-generated text
+
+Manual Text Overlay AI-generated text
+
+Phenomenon / Object / Process Presenter
+
+One clear teaching action too much information in one shot
+
+A simple believable demonstration an impressive but confusing AI scene`;
+
+    function updatePrompts() {
+      const cls = document.getElementById('in_class').value.trim() || "[Class]";
+      const subject = document.getElementById('in_subject').value.trim() || "[Subject]";
+      const concept = document.getElementById('in_concept').value.trim() || "[Concept]";
+      const problem = document.getElementById('in_problem').value.trim() || "[আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়]";
+
+      let result = p1Template;
+      result = result.split("[Class]").join(cls);
+      result = result.split("[Subject]").join(subject);
+      result = result.split("[Concept]").join(concept);
+      result = result.split("[আমার বিশেষ সমস্যা / কোথায় বুঝতে অসুবিধা হয়]").join(problem);
+
+      document.getElementById('p1').innerText = result;
+    }
+
+    function clearAll() {
+      document.getElementById('in_class').value = "";
+      document.getElementById('in_subject').value = "";
+      document.getElementById('in_concept').value = "";
+      document.getElementById('in_problem').value = "";
+      updatePrompts();
+    }
+
+    function copyText(id, btn) {
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = `<span>Copied to Clipboard!</span>`;
+        btn.classList.add('copied');
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Initialize display on load
+    window.onload = updatePrompts;
+  </script>
+</body>
+</html>
